@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:replace = "fragments :: head">
+</head>
+<body>
+    <nav th:replace = "fragments :: navigation"></nav>
+    <div class="table-responsive container">
+        <table class = "table table-striped" style = "max-width:1200px;">
+            <col width="130">
+            <col width="200">
+            <col width="80">
+            <col width="80">
+            <tr >
+                <th scope="col">Title</th>
+                <th scope="col">Description</th>
+                <th scope="col">Author</th>
+                <th scop="col">Published Date</th>
+            </tr>
+            <tr th:each = "feed : ${feedList}">
+                <td scope="row"><a th:href = "${feed.link}" th:text = "${feed.title}" scope="row">link</a></td>
+                <td th:utext = "${feed.description}" scope="row"></td>
+                <td th:text = "${feed.author}" scope="row"></td>
+                <td th:text = "${feed.datePublished}" scope="row"></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
