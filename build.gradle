@@ -27,9 +27,18 @@ repositories {
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 	compile('org.springframework.boot:spring-boot-starter-web')
+
+	compile("org.springframework.boot:spring-boot-starter-security")
+
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('mysql:mysql-connector-java')
+
 	compile('com.rometools:rome:1.9.0')
+
 	runtime('org.springframework.boot:spring-boot-devtools')
+	testCompile("junit:junit")
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile("org.springframework.security:spring-security-test")
 }
 
 bootRun {

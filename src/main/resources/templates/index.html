@@ -4,23 +4,21 @@
 </head>
 <body>
     <nav th:replace = "fragments :: navigation"></nav>
-    <div class="table-responsive container" style="margin-top: 2%; margin-bottom: 2%;">
+    <div class="table-striped table-responsive container" style="margin-top: 2%; margin-bottom: 2%;">
         <table class = "table table-striped" style = "max-width:1200px;">
             <col width="130">
             <col width="200">
             <col width="80">
             <col width="80">
-            <tr >
-                <th scope="col">Title</th>
-                <th scope="col">Description</th>
-                <th scope="col">Author</th>
-                <th scop="col">Published Date</th>
-            </tr>
+            <thead class = "thead-dark">
+                <tr >
+                    <th scope="col"><h1>Title</h1></th>
+                    <th scope="col"><h1>Description</h1></th>
+                </tr>
+            </thead>
             <tr th:each = "feed : ${feedList}">
                 <td scope="row"><a th:href = "${feed.link}" th:text = "${feed.title}" scope="row">link</a></td>
                 <td th:utext = "${feed.description}" scope="row"></td>
-                <td th:text = "${feed.author}" scope="row"></td>
-                <td th:text = "${feed.datePublished}" scope="row"></td>
             </tr>
         </table>
     </div>

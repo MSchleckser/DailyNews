@@ -14,15 +14,13 @@
 <body>
     <nav th:replace = "fragments :: navigation"></nav>
 
-    <form method="post" class="container form">
+    <form method="post" th:action = "@{/login}" class="container form">
         <h1 class="display-5 form_header">Login</h1>
         <div class="form-group">
-            <label for="usernameTB">Password</label>
-            <input type="text" class="form-control" id="usernameTB" placeholder="Username">
+            <input class="form-control" placeholder="Username" name = "username"></input>
         </div>
         <div class="form-group">
-            <label for="passwordTB">Password</label>
-            <input type="password" class="form-control" id="passwordTB" placeholder="Password">
+            <input class="form-control" placeholder="Password" name = "password"></input>
         </div>
 
         <button type="submit" class="btn btn-primary btn-lg btn-block">Submit</button>

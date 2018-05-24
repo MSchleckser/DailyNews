@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping("Register")
+@RequestMapping("register")
 public class SignupController {
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
