@@ -14,18 +14,19 @@
 <body>
     <nav th:replace = "fragments :: navigation"></nav>
 
-    <form method="post" class="container form">
+    <div th:if="${param.error}">Invalid username or password.</div>
+    <form method="post" class="container form" th:action="@{/login}">
         <h1 class="display-5 form_header">Login</h1>
         <div class="form-group">
-            <label for="usernameTB">Password</label>
-            <input type="text" class="form-control" id="usernameTB" placeholder="Username">
+            <label for="usernameTB">Username</label>
+            <input type="text" class="form-control" id="usernameTB" name="username" placeholder="Username">
         </div>
         <div class="form-group">
             <label for="passwordTB">Password</label>
-            <input type="password" class="form-control" id="passwordTB" placeholder="Password">
+            <input type="password" class="form-control" id="passwordTB" password="password" placeholder="Password">
         </div>
 
-        <button type="submit" class="btn btn-primary btn-lg btn-block">Submit</button>
+        <button type="submit" class="btn btn-primary btn-lg btn-block">Sign In</button>
     </form>
 </body>
 </html>

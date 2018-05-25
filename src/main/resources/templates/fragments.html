@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<html lang="en" xmlns:th="http://www.thymeleaf.org/" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head th:fragment = "head">
     <meta charset="UTF-8"/>
     <title th:text = "${title}">Daily News</title>
@@ -18,9 +18,9 @@
     </ul>
 
     <ul class="navbar-nav navbar-right ml-auto">
-        <li class = "nav-link"><a class = "nav-link" href="/Register"><span class="glyphicon glyphicon-user" style="margin-right: 10px"></span>Sign Up</a></li>
-        <li class = "nav-link"><a class = "nav-link" href="/Login"><span class="glyphicon glyphicon-log-in" style="margin-right: 10px"></span>Login</a></li>
-        <li class = "nav-link"><a class = "nav-link" href="/ManageFeeds"><span class="glyphicon glyphicon-cog" style="margin-right: 10px"></span>Manage Feeds</a></li>
+        <li class = "nav-link"><a class = "nav-link" href="/register"><span class="glyphicon glyphicon-user" style="margin-right: 10px"></span>Sign Up</a></li>
+        <li class = "nav-link"><a class = "nav-link" href="/login"><span class="glyphicon glyphicon-log-in" style="margin-right: 10px"></span>Login</a></li>
+        <li class = "nav-link"><a class = "nav-link" href="/managefeeds"><span class="glyphicon glyphicon-cog" style="margin-right: 10px"></span>Manage Feeds</a></li>
     </ul>
 </nav>
 

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping("Login")
+@RequestMapping("login")
 public class LoginController {
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
@@ -15,8 +15,8 @@ public class LoginController {
 		return "login";
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.POST)
-	public String processLoginForm() {
-		return "redirect:/Login";
-	}
+//	@RequestMapping(value = "", method = RequestMethod.POST)
+//	public String processLoginForm() {
+//		return "redirect:/Login";
+//	}
 }

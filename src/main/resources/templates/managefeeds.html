@@ -4,5 +4,21 @@
 </head>
 <body>
 <nav th:replace = "fragments :: navigation"></nav>
+
+<form>
+    <table>
+        <tr>
+            <td><label for="feedDd">Feed</label></td>
+            <td>
+                <select id = "feedDd">
+                    <option th:each = "publisher : ${publishers}" th:value = "${publisher}" th:text = "${publisher}"></option>
+                </select>
+            </td>
+        </tr>
+        <td>
+            <input type="submit"/>
+        </td>
+    </table>
+</form>
 </body>
 </html>
