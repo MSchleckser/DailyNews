@@ -1,4 +1,4 @@
-package com.dailynews.DailyNews.models;
+package com.dailynews.DailyNews.models.rssfeeds.article;
 
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
@@ -6,16 +6,15 @@ import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 
-public class FeedFetcher {
+public class ArticleFetcher {
 
-	private LinkedList<Feed> feedList = new LinkedList<>();
+	private LinkedList<Article> articleList = new LinkedList<>();
 
-	public FeedFetcher(){
+	public ArticleFetcher(){
 
 	}
 
@@ -27,7 +26,7 @@ public class FeedFetcher {
 			SyndFeed syndFeed = input.build(new XmlReader(url));
 			int i = 0;
 			for (SyndEntry article : syndFeed.getEntries()) {
-				Feed f = new Feed();
+				Article f = new Article();
 
 				f.setTitle(article.getTitle());
 				f.setDescription(article.getDescription().getValue());
@@ -35,21 +34,21 @@ public class FeedFetcher {
 				f.setLink(article.getLink());
 				f.setDatePublished(article.getPublishedDate());
 
-				feedList.add(f);
+				articleList.add(f);
 			}
 		} catch (Exception ex){
 			System.out.println(ex);
 		}
 
-		Collections.sort(feedList, new Comparator<Feed>() {
+		Collections.sort(articleList, new Comparator<Article>() {
 			@Override
-			public int compare(Feed o1, Feed o2) {
+			public int compare(Article o1, Article o2) {
 				return o1.getDate().compareTo(o2.getDate()) * -1;
 			}
 		});
 	}
 
-	public LinkedList<Feed> getFeedList(){
-		return feedList;
+	public LinkedList<Article> getArticleList(){
+		return articleList;
 	}
 }

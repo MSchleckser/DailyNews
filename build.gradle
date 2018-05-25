@@ -25,22 +25,26 @@ repositories {
 
 
 dependencies {
+	//Base apis for spring boot and thymeleaf
 	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 	compile('org.springframework.boot:spring-boot-starter-web')
 
-	compile("org.springframework.boot:spring-boot-starter-security")
+	//Spring boot security API
+	//compile("org.springframework.boot:spring-boot-starter-security")
 
-	compile('org.springframework.boot:spring-boot-starter-data-jpa')
-	compile('mysql:mysql-connector-java')
-
+	//Rome RSS feed API.
 	compile('com.rometools:rome:1.9.0')
 
+	//Runtime APIs
 	runtime('org.springframework.boot:spring-boot-devtools')
-	testCompile("junit:junit")
+
+	//Test compile APIs
 	testCompile('org.springframework.boot:spring-boot-starter-test')
-	testCompile("org.springframework.security:spring-security-test")
+	//testCompile("org.springframework.security:spring-security-test")
 }
 
+
+//Hot-swap HTML pages
 bootRun {
 	sourceResources(sourceSets.main)
 }

@@ -1,11 +1,11 @@
-package com.dailynews.DailyNews.models;
+package com.dailynews.DailyNews.models.rssfeeds.article;
 
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Objects;
 
-public class Feed implements Comparator<Feed>, Comparable<Feed> {
+public class Article implements Comparator<Article>, Comparable<Article> {
 	private String title;
 	private String description;
 	private String author;
@@ -62,11 +62,11 @@ public class Feed implements Comparator<Feed>, Comparable<Feed> {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		Feed feed = (Feed) o;
-		return Objects.equals(title, feed.title) &&
-				Objects.equals(description, feed.description) &&
-				Objects.equals(author, feed.author) &&
-				Objects.equals(link, feed.link);
+		Article article = (Article) o;
+		return Objects.equals(title, article.title) &&
+				Objects.equals(description, article.description) &&
+				Objects.equals(author, article.author) &&
+				Objects.equals(link, article.link);
 	}
 
 	@Override
@@ -76,12 +76,12 @@ public class Feed implements Comparator<Feed>, Comparable<Feed> {
 	}
 
 	@Override
-	public int compareTo(Feed feed) {
-		return feed.datePublished.compareTo(feed.datePublished);
+	public int compareTo(Article feed) {
+		return datePublished.compareTo(feed.datePublished);
 	}
 
 	@Override
-	public int compare(Feed o1, Feed o2) {
+	public int compare(Article o1, Article o2) {
 		return o1.compareTo(o2);
 	}
 }
