@@ -2,31 +2,62 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org/">
 <head th:replace = "fragments :: head">
 </head>
+
 <style>
     .form {
         padding: 2.5%;
         padding-top: 0%;
-        max-width: 500px;
         color: black;
         margin-top: 2%;
     }
 </style>
-<body>
+
+<body onload="getQueries()">
     <nav th:replace = "fragments :: navigation"></nav>
 
+    <div id="errorMessage"></div>
+
     <div th:if="${param.error}">Invalid username or password.</div>
-    <form method="post" class="container form" th:action="@{/login}">
+    <form method="post" class="container form w-25" th:action="@{/login}" th:object = "${user}">
         <h1 class="display-5 form_header">Login</h1>
         <div class="form-group">
-            <label for="usernameTB">Username</label>
-            <input type="text" class="form-control" id="usernameTB" name="username" placeholder="Username">
+            <label th:for="username">Username</label>
+            <input class="form-control" name="username" id="username"/>
         </div>
         <div class="form-group">
-            <label for="passwordTB">Password</label>
-            <input type="password" class="form-control" id="passwordTB" password="password" placeholder="Password">
+            <label th:for="passwordTB">Password</label>
+            <input class="form-control" name="password" id="password" type="password"/>
         </div>
 
         <button type="submit" class="btn btn-primary btn-lg btn-block">Sign In</button>
     </form>
 </body>
+
+<script>
+    function displayError(errorMessage){
+        document.getElementById("errorMessage").innerText = errorMessage;
+    }
+
+    //https://stackoverflow.com/questions/31542032/how-to-add-default-values-to-input-fields-in-thymeleaf?rq=1
+    //Many thanks to Kingamere on stack overflow.
+    function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        let regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        console.log("Test");
+        
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+    function getQueries(){
+        let errors = getParameterByName("errors");
+        let username = getParameterByName("username");
+
+        displayError(errors);
+        document.getElementById("username").value = username;
+    }
+</script>
 </html>

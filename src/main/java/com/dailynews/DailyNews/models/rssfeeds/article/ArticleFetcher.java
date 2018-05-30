@@ -6,22 +6,22 @@ import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 
 public class ArticleFetcher {
 
-	private LinkedList<Article> articleList = new LinkedList<>();
+	private ArrayList<Article> articleList = new ArrayList<>();
 
 	public ArticleFetcher(){
 
 	}
 
-	public void fetchFeed(String feedUrl){
+	public void fetchFeed(URL url){
 
-		try{
-			URL url = new URL(feedUrl);
+		try {
 			SyndFeedInput input = new SyndFeedInput();
 			SyndFeed syndFeed = input.build(new XmlReader(url));
 			int i = 0;
@@ -36,19 +36,28 @@ public class ArticleFetcher {
 
 				articleList.add(f);
 			}
-		} catch (Exception ex){
-			System.out.println(ex);
+		} catch (Exception e){
+			System.out.println(e);
 		}
 
 		Collections.sort(articleList, new Comparator<Article>() {
 			@Override
 			public int compare(Article o1, Article o2) {
+				if(o1.getDate() == null && o2.getDate() == null)
+					return 0;
+
+				if(o1.getDate() == null)
+					return -1;
+
+				if(o2.getDate() == null)
+					return 1;
+				
 				return o1.getDate().compareTo(o2.getDate()) * -1;
 			}
 		});
 	}
 
-	public LinkedList<Article> getArticleList(){
+	public ArrayList<Article> getArticleList(){
 		return articleList;
 	}
 }

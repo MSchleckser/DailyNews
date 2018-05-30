@@ -4,21 +4,36 @@
 </head>
 <body>
 <nav th:replace = "fragments :: navigation"></nav>
+    <div class="page-header" style = "margin: 1.8%;">
+        <h1>Manage your feeds</h1>
+    </div>
+    
+    <hr style="margin: .1%; margin-left: 1%; max-width: 400px;"/>
 
-<form>
-    <table>
-        <tr>
-            <td><label for="feedDd">Feed</label></td>
-            <td>
-                <select id = "feedDd">
-                    <option th:each = "publisher : ${publishers}" th:value = "${publisher}" th:text = "${publisher}"></option>
-                </select>
-            </td>
-        </tr>
-        <td>
-            <input type="submit"/>
-        </td>
-    </table>
-</form>
+    <form method="post" th:action="@{/managefeeds/add}" th:unless"${publishers.isEmpty()}" class="form-group w-25" style="margin: 1%">
+        <h1 class="display-5 form_header">Get Feed</h1>
+        <span th:each="p : ${publishers}">
+            <h2 th:text="${p.name}"></h2>
+            <ul class="list-group" th:each="link : ${p.links}">
+                <li class="list-group-item" th:unless="${userFeeds.contains(link)}"><input th:text="${link.title}" th:value="${link.id}" type="checkbox" name="addRssIds"></li>
+            </ul>
+        </span>
+
+        <input type="submit" value="add" class="form-control w-25">
+    </form>
+    
+    <hr style="margin: .1%; margin-left: 1%; max-width: 400px;"/>
+
+    <form method="post" th:action="@{/managefeeds/remove}" th:unless"${userFeeds.isEmpty()}" class="form-group w-25" style="margin: 1%">
+        <h1 class="display-5 form_header">Remove Feed</h1>
+
+        <ul class="list-group" th:each="feed : ${userFeeds}">
+                <li class="list-group-item"><input th:text="${feed.title}" th:value="${feed.id}" type="checkbox" name="removeRssIds"></li>
+        </ul>
+
+        <input type="submit" value="remove" class="form-control w-25">
+    </form>
+</div>
+
 </body>
 </html>

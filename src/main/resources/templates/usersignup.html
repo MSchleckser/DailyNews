@@ -1,39 +1,147 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org/">
+
 <head th:replace = "fragments :: head">
 </head>
+
 <style>
-    .form {
-        padding: 2.5%;
-        padding-top: 0%;
-        max-width: 500px;
-        color: black;
-        margin-top: 2%;
+    #errorMessage {
+        background-color: red;
+        box-shadow: 5px 5px rgb(88, 4, 4);
+        color: white;
+
+        position: absolute;
+        margin: 15% auto;
+
+        top: 10%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        min-width: 150px;
+        min-height: 150ox;
+        padding: 2%;
+
+        font-size: 1.2em;
+
+        cursor: pointer;
+    }
+
+    #errorMessage::before{
+        content: "ZOINKS! \A";
+        white-space: pre;
+        font-size: 2em;
+        font-weight: bold;
+    }
+
+    #errorMessage::after {
+        content: "\A Close Message";
+        display: block;
+        background-color: white;
+        color: red;
+        text-align: center;
+        width: 10em;
+        padding: 2%;
+        margin: 1% auto;
+        font-size: .8em;
+    }
+
+    #errorMessage:empty {
+        display: none;
     }
 </style>
-<body>
+
+<body onload="getQueries()">
     <nav th:replace = "fragments :: navigation"></nav>
 
-    <form method="post" class="container form">
+    <div id="errorMessage"></div>
+
+    <form method="post" class="container form w-25" th:action="@{/register}" th:object="${user}">
         <h1 class="display-5 form_header">Sign-Up</h1>
-        <div class="form-group">
-            <label for="emailTB">Email address</label>
-            <input type="email" class="form-control" id="emailTB" placeholder="Email">
-        </div>
-        <div class="form-group">
-            <label for="usernameTB">Password</label>
-            <input type="text" class="form-control" id="usernameTB" placeholder="Username">
-        </div>
-        <div class="form-group">
-            <label for="passwordTB">Password</label>
-            <input type="password" class="form-control" id="passwordTB" placeholder="Password">
-        </div>
-        <div class="form-group">
-            <label for="vPasswordTB">Verify Password</label>
-            <input type="password" class="form-control" id="vPasswordTB" placeholder="Password">
+
+        <div class="form-group mb-3">
+            <input th:field = "*{username}" th:value="${username}" class="form-control" placeholder="Username"/>
         </div>
 
-        <button type="submit" class="btn btn-primary btn-lg btn-block">Submit</button>
+        <div class="form-group mb-3">
+            <input th:field = "*{password}" type="password" class="form-control" placeholder="Password"/>
+        </div>
+        <div class="form-group mb-3">
+            <input type="password" class="form-control" id="vPassword" placeholder="Re-Enter Password"/>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg btn-block w-50" id="loginButton">Submit</button>
     </form>
+
+    
 </body>
+
+<script>
+    document.getElementById("loginButton").addEventListener("click", function(event){
+
+        let error = "";
+        error += validateUsername();
+        error += validatePasswords();
+        
+        if(error.length > 0){
+            displayError(error);
+            event.preventDefault();
+        }
+    });
+
+    document.getElementById("errorMessage").addEventListener("click", function(event){
+        document.getElementById("errorMessage").innerHTML = "";
+    });
+
+    function validateUsername(){
+        let username = document.getElementById("username").value;
+
+        if(username.length == 0){
+            return "Please enter a username. ";
+        }
+
+        return "";
+    }
+
+    function validatePasswords(){
+        let pass = document.getElementById("password").value;
+        let vPass = document.getElementById("vPassword").value;
+
+        let retError = "";
+
+        if(pass != vPass){
+            retError += "Password fields must match. ";
+        }
+
+        if(pass.length < 8){
+            retError += "Password is too short, it must be at least 8 letters long. ";
+        }
+        console.log(retError);
+
+        return retError;
+    }
+
+    function displayError(errorMessage){
+        document.getElementById("errorMessage").innerText = errorMessage;
+    }
+
+    //https://stackoverflow.com/questions/31542032/how-to-add-default-values-to-input-fields-in-thymeleaf?rq=1
+    //Many thanks to Kingamere on stack overflow.
+    function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        let regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+    function getQueries(){
+        let errors = getParameterByName("errors");
+        let username = getParameterByName("username");
+
+        displayError(errors);
+        document.getElementById("username").value = username;
+    }
+</script>
 </html>

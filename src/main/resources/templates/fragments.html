@@ -5,24 +5,32 @@
     <title th:text = "${title}">Daily News</title>
 
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous"/>
+    <link rel="stylesheet" type="text/css" th:href="@{static/styles/errors.css}"/>
+
     <style>
-        @import url("//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css")
+        @import url("//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css");
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-sm bg-dark navbar-dark" th:fragment="navigation">
-    <ul class="navbar-nav">
-        <a class="navbar-brand mb-0" style="font-size: 1.5em;" href="/">News Hub</a>
-    </ul>
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark" th:fragment="navigation">
+        <ul class="navbar-nav">
+            <a class="navbar-brand mb-0" style="font-size: 1.5em;" href="/">News Hub</a>
+        </ul>
+        <span th:if = "${session.userId == null}" class="navbar-nav navbar-right ml-auto">
+            <div class = "nav-link"><a class = "nav-link" href="/login"><span class="glyphicon glyphicon-log-in" style="margin-right: 10px"></span>Login</a></div>
+            <div class = "nav-link"><a class = "nav-link" href="/register"><span class="glyphicon glyphicon-user" style="margin-right: 10px"></span>Sign Up</a></div>
+        </span>
 
-    <ul class="navbar-nav navbar-right ml-auto">
-        <li class = "nav-link"><a class = "nav-link" href="/register"><span class="glyphicon glyphicon-user" style="margin-right: 10px"></span>Sign Up</a></li>
-        <li class = "nav-link"><a class = "nav-link" href="/login"><span class="glyphicon glyphicon-log-in" style="margin-right: 10px"></span>Login</a></li>
-        <li class = "nav-link"><a class = "nav-link" href="/managefeeds"><span class="glyphicon glyphicon-cog" style="margin-right: 10px"></span>Manage Feeds</a></li>
-    </ul>
-</nav>
+        <span th:unless = "${session.userId == null}" class="navbar-nav navbar-right ml-auto">
+            <div class = "nav-link"><a class = "nav-link" href="/logout"><span class="glyphicon glyphicon-log-out" style="margin-right: 10px"></span>Logout</a></div>
+            <div class = "nav-link"><a class = "nav-link" href="/managefeeds"><span class="glyphicon glyphicon-cog" style="margin-right: 10px"></span>Manage Feeds</a></div>
 
+            <span th:if = "${session.role == 'ADMIN'}">
+                <div class = "nav-link"><a class = "nav-link" href="/admin"><span class="glyphicon glyphicon-warning-sign" style="margin-right: 10px"></span>Admin</a></div>
+            </span>
+        </span>
+    </nav>
 </body>
 </html>
