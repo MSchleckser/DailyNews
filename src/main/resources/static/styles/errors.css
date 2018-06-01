@@ -1,0 +1,44 @@
+
+#errorMessage {
+    background-color: red;
+    box-shadow: 5px 5px rgb(88, 4, 4);
+    color: white;
+
+    position: absolute;
+    margin: 15% auto;
+
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    min-width: 150px;
+    min-height: 150ox;
+    padding: 2%;
+
+    font-size: 1.2em;
+
+    cursor: pointer;
+}
+
+#errorMessage::before{
+    content: "ZOINKS! \A";
+    white-space: pre;
+    font-size: 2em;
+    font-weight: bold;
+}
+
+#errorMessage::after {
+    content: "\A Close Message";
+    display: block;
+    background-color: white;
+    color: red;
+    text-align: center;
+    width: 10em;
+    padding: 2%;
+    margin: 1% auto;
+    font-size: .8em;
+}
+
+#errorMessage:empty {
+    display: none;
+}

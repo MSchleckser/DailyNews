@@ -5,9 +5,11 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 
 @Repository
 @Transactional
 public interface PublisherDao extends CrudRepository<Publisher, Integer> {
+
+	@Query(value = "SELECT * FROM Publisher ORDER BY rand() LIMIT 1", nativeQuery = true)
+	public Publisher getRandomPublisher();
 }

@@ -1,6 +1,5 @@
 package com.dailynews.DailyNews.models.user.role;
 
-import com.dailynews.DailyNews.models.rssfeeds.rsslink.RssLink;
 import com.dailynews.DailyNews.models.user.User;
 
 import javax.persistence.*;

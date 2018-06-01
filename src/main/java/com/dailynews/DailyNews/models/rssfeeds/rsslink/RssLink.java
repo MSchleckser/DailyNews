@@ -1,9 +1,12 @@
 package com.dailynews.DailyNews.models.rssfeeds.rsslink;
 
+import com.dailynews.DailyNews.models.rssfeeds.rsslink.publisher.Publisher;
 import com.dailynews.DailyNews.models.user.User;
+import com.dailynews.DailyNews.models.user.role.Role;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +26,9 @@ public class RssLink {
 
 	@ManyToMany(mappedBy = "rssLinks")
 	private List<User> users;
+
+	@OneToOne(fetch = FetchType.EAGER)
+	private Publisher publisher;
 
 	public RssLink(){
 
@@ -62,6 +68,14 @@ public class RssLink {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public Publisher getPublisher() {
+		return publisher;
+	}
+
+	public void setPublisher(Publisher publisher) {
+		this.publisher = publisher;
 	}
 
 	@Override
