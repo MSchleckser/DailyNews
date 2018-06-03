@@ -92,4 +92,15 @@ public class RssLink {
 
 		return Objects.hash(id, rssUrl);
 	}
+
+	@Override
+	public String toString() {
+		return "RssLink{" +
+				"id=" + id +
+				", title='" + title + '\'' +
+				", rssUrl=" + rssUrl +
+				", users=" + users +
+				", publisher=" + publisher +
+				'}';
+	}
 }

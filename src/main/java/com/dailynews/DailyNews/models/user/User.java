@@ -14,10 +14,6 @@ import java.util.List;
 @Table(name="user")
 public class User {
 
-
-	@ManyToMany
-	private List<RssLink> rssLinks = new ArrayList<>();
-
 	@Id
 	@GeneratedValue
 	private int id;
@@ -30,6 +26,9 @@ public class User {
 
 	@ManyToOne
 	private Role role;
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	private List<RssLink> rssLinks = new ArrayList<>();
 
 	public User() {
 
@@ -49,16 +48,6 @@ public class User {
 	public int getId() {
 		return id;
 	}
-
-	//<editor-fold desc="rssLinks Getters and Setters">
-	public void setRssLinks(List<RssLink> rssLinks) {
-		this.rssLinks = rssLinks;
-	}
-
-	public List<RssLink> getRssLinks(){
-		return rssLinks;
-	}
-	//</editor-fold>
 
 	//<editor-fold desc="username Getters and Setters">
 	public String getUsername() {
@@ -102,4 +91,13 @@ public class User {
 	}
 	//</editor-fold>
 
+	//<editor-fold desc="rssLinks Getters and Setters">
+	public void setRssLinks(List<RssLink> rssLinks) {
+		this.rssLinks = rssLinks;
+	}
+
+	public List<RssLink> getRssLinks(){
+		return rssLinks;
+	}
+	//</editor-fold>
 }

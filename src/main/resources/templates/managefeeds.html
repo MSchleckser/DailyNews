@@ -2,38 +2,139 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org/">
 <head th:replace = "fragments :: head">
 </head>
+<style>
+    .glyphicon-remove, .glyphicon-ok {
+        font-size: 1.8em;
+    }
+</style>
 <body>
 <nav th:replace = "fragments :: navigation"></nav>
-    <div class="page-header" style = "margin: 1.8%;">
-        <h1>Manage your feeds</h1>
-    </div>
-    
-    <hr style="margin: .1%; margin-left: 1%; max-width: 400px;"/>
 
-    <form method="post" th:action="@{/managefeeds/add}" th:unless"${publishers.isEmpty()}" class="form-group w-25" style="margin: 1%">
-        <h1 class="display-5 form_header">Get Feed</h1>
-        <span th:each="p : ${publishers}">
-            <h2 th:text="${p.name}"></h2>
-            <ul class="list-group" th:each="link : ${p.links}">
-                <li class="list-group-item" th:unless="${userFeeds.contains(link)}"><input th:text="${link.title}" th:value="${link.id}" type="checkbox" name="addRssIds"></li>
-            </ul>
-        </span>
+<div class="table-striped table-responsive container" style="margin-top: 2%; margin-bottom: 2%;">
+    <table class = "table table-striped" style = "max-width:80%;">
+        <col width="130"/>
+        <col width="20"/>
+        <col width="20"/>
 
-        <input type="submit" value="add" class="form-control w-25">
-    </form>
-    
-    <hr style="margin: .1%; margin-left: 1%; max-width: 400px;"/>
-
-    <form method="post" th:action="@{/managefeeds/remove}" th:unless"${userFeeds.isEmpty()}" class="form-group w-25" style="margin: 1%">
-        <h1 class="display-5 form_header">Remove Feed</h1>
-
-        <ul class="list-group" th:each="feed : ${userFeeds}">
-                <li class="list-group-item"><input th:text="${feed.title}" th:value="${feed.id}" type="checkbox" name="removeRssIds"></li>
-        </ul>
-
-        <input type="submit" value="remove" class="form-control w-25">
-    </form>
+        <thead class = "thead-light">
+            <tr>
+                <th scope="col" style="width: 6%">Title</th>
+                <th scope="col" style="width: 4%">Publisher</th>
+                <th scope="col" style="width: 1%">Subscribe</th>
+            </tr>
+        </thead>
+    </table>
 </div>
 
 </body>
+
+<script th:inline="javascript">
+
+    var subscribedIds = [];
+    var feedIds = [];
+
+    $(document).ready(function(){
+        let feedPath = "rest/feed/all";
+        var subcribedPath = "rest/user/feeds";
+
+        $.when($.get(feedPath), $.get(subcribedPath)).done(function(feedData, subscribedIds){
+            var feeds = fetchFeeds(feedData[0]);
+            var ids = fetchSubscribedIds(subscribedIds[0]);
+
+            feeds.forEach(function(feed) {
+                feed.checkSubscribed(ids);
+                createTableRow(feed);
+            });
+        });
+    });
+
+    function createTableRow(element){
+        let feedRow = "<tr id=\"" + element.id + "\" scope = \"row\">";
+
+        feedRow += "<td>" + element.publisher + "</td>";
+        feedRow += "<td>" + element.title + "</td>";
+
+        if(element.has){
+            feedRow += "<td class=\"button\">" + "<span class=\"glyphicon glyphicon-ok\" onclick = unsubscribe(" +element.id + ") />" + "</td>";
+        } else {
+            feedRow += "<td class=\"button\">" + "<span class=\"glyphicon glyphicon-remove\" onclick = subscribe(" + element.id + ") />" + "</td>";
+        }
+
+        feedRow += "</tr>";
+
+        $(".table").append(feedRow);
+    }
+
+    function subscribe(id){
+        $.get("rest/user/subscribe/" + id, function(success){
+            var button = $("#" + id).children(".button").children("span");
+            button.val("Unsubscribe");
+            button.attr("onClick", "unsubscribe(" + id + ")");
+            button.removeClass("glyphicon glyphicon-remove");
+            button.addClass("glyphicon glyphicon-ok");
+        });
+    }
+
+    function unsubscribe(id){
+        $.get("rest/user/unsubscribe/" + id, function(success){
+            if(success) {
+                var button = $("#" + id).children(".button").children("span");
+                button.val("Subscribe");
+                button.attr("onClick", "subscribe(" + id + ")");
+                button.removeClass("glyphicon glyphicon-ok");
+                button.addClass("glyphicon glyphicon-remove");
+            }
+        });
+    }
+
+    function fetchFeeds(data){
+        var retFeeds = [];
+
+        xmlDoc = $.parseXML(data);
+        $xml = $( xmlDoc )
+
+        $links = $xml.find("links");
+        
+        $("link", $links).each(function(i, element) {
+            var nfeed = new Feed(element);
+            retFeeds.push(nfeed);
+        })
+
+        return retFeeds;
+    }
+
+    function fetchSubscribedIds(data){
+        var ids = [];
+        
+        xmlDoc = $.parseXML(data);
+        $xml = $( xmlDoc );
+
+        $xmlIds = $xml.find("feedIds");
+
+        $("id", $xmlIds).each(function(i, element){
+            ids.push($(element).text());
+        });
+            
+        return ids;
+    }
+
+    class Feed {
+
+        constructor(element){
+            this.id= $(element).find("id").text();
+            this.title= $(element).find("title").text();
+            this.publisher= $(element).find("publisher").text();
+            this.has = false;
+        }
+
+        checkSubscribed(subscribedIds) {
+            subscribedIds.forEach((subId) => {
+                if(subId == this.id){
+                    this.has = true;
+                    return;
+                }
+            });
+        }
+    }
+</script>
 </html>

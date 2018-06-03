@@ -1,4 +1,4 @@
-package com.dailynews.DailyNews.models.rssfeeds.rsslink.restwrapper;
+package com.dailynews.DailyNews.models.restwrappers;
 
 import com.dailynews.DailyNews.models.rssfeeds.rsslink.RssLink;
 
@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
+@XmlRootElement(name = "link")
 @XmlAccessorType(XmlAccessType.NONE)
 public class RssLinkRest {
 
@@ -19,16 +19,16 @@ public class RssLinkRest {
 
 	private String publisher;
 
-
 	private RssLinkRest(){
 
 	}
 
 	public static RssLinkRest convertRssLink(RssLink rssLink){
 		RssLinkRest nRest = new RssLinkRest();
+
 		nRest.id = rssLink.getId();
 		nRest.title = rssLink.getTitle();
-		nRest.url = rssLink.getRssUrl().getPath();
+		nRest.url = rssLink.getRssUrl().toString();
 		nRest.publisher = rssLink.getPublisher().getName();
 
 		return nRest;
