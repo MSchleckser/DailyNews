@@ -33,9 +33,6 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('mysql:mysql-connector-java')
 
-	//Spring boot security API
-	//compile("org.springframework.boot:spring-boot-starter-security")
-
 	//Rome RSS feed API.
 	compile('com.rometools:rome:1.9.0')
 
@@ -51,4 +48,8 @@ dependencies {
 //Hot-swap HTML pages
 bootRun {
 	sourceResources(sourceSets.main)
+}
+
+bootJar {
+	launchScript()
 }

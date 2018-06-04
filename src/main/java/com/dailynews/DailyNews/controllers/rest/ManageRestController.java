@@ -1,10 +1,13 @@
 package com.dailynews.DailyNews.controllers.rest;
 
-import com.dailynews.DailyNews.models.restwrappers.PublisherRest;
-import com.dailynews.DailyNews.models.restwrappers.UserRest;
+import com.dailynews.DailyNews.models.rssfeeds.article.Article;
+import com.dailynews.DailyNews.models.rssfeeds.article.ArticleFetcher;
+import com.dailynews.DailyNews.models.xmlwrappers.ArticleXml;
+import com.dailynews.DailyNews.models.xmlwrappers.PublisherXml;
+import com.dailynews.DailyNews.models.xmlwrappers.UserXML;
 import com.dailynews.DailyNews.models.rssfeeds.rsslink.RssLink;
 import com.dailynews.DailyNews.models.rssfeeds.rsslink.RssLinkDao;
-import com.dailynews.DailyNews.models.restwrappers.RssLinkRest;
+import com.dailynews.DailyNews.models.xmlwrappers.RssLinkXML;
 import com.dailynews.DailyNews.models.rssfeeds.rsslink.publisher.Publisher;
 import com.dailynews.DailyNews.models.rssfeeds.rsslink.publisher.PublisherDao;
 import com.dailynews.DailyNews.models.user.User;
@@ -40,8 +43,8 @@ public class ManageRestController {
 		StringWriter retString = new StringWriter();
 
 		try {
-			JAXBContext context = JAXBContext.newInstance(RssLinkRest.class);
-			RssLinkRest restLink = RssLinkRest.convertRssLink(rssDao.findById(feedId).get());
+			JAXBContext context = JAXBContext.newInstance(RssLinkXML.class);
+			RssLinkXML restLink = RssLinkXML.convertRssLink(rssDao.findById(feedId).get());
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
@@ -62,7 +65,7 @@ public class ManageRestController {
 		StringWriter retString = new StringWriter();
 
 		try{
-			JAXBContext context = JAXBContext.newInstance(PublisherRest.class);
+			JAXBContext context = JAXBContext.newInstance(PublisherXml.class);
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			m.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
@@ -70,7 +73,7 @@ public class ManageRestController {
 			Iterable<Publisher> publishers = pDao.findAll();
 
 			for(Publisher p : publishers){
-				PublisherRest pRest = PublisherRest.convertPublisher(p);
+				PublisherXml pRest = PublisherXml.convertPublisher(p);
 
 				m.marshal(pRest, retString);
 			}
@@ -88,12 +91,12 @@ public class ManageRestController {
 	public String getUserFeeds(@PathVariable int userId){
 		StringWriter retString = new StringWriter();
 		try {
-			JAXBContext context = JAXBContext.newInstance(UserRest.class);
-			UserRest userRest = UserRest.convertUser(uDao.findById(userId).get());
+			JAXBContext context = JAXBContext.newInstance(UserXML.class);
+			UserXML userXml = UserXML.convertUser(uDao.findById(userId).get());
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
-			m.marshal(userRest, retString);
+			m.marshal(userXml, retString);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -151,5 +154,128 @@ public class ManageRestController {
 		retStr += "</feedIds>";
 
 		return retStr;
+	}
+
+	@RequestMapping(value="/feeds/articles")
+	@ResponseBody
+	public String getUserArticles(HttpSession session){
+		StringWriter retStr = new StringWriter();
+
+		retStr.write("<Articles>");
+
+		try {
+			JAXBContext context = JAXBContext.newInstance(ArticleXml.class);
+			Marshaller m = context.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			m.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+
+			User u = uDao.findById((Integer)session.getAttribute("userId")).get();
+
+			ArticleFetcher fetcher = new ArticleFetcher();
+			for(RssLink link : u.getRssLinks()){
+				fetcher.fetchFeed(link);
+			}
+
+			for(Article article : fetcher.getArticleList()){
+				ArticleXml xml = ArticleXml.convertArticle(article);
+				m.marshal(xml, retStr);
+			}
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+		return retStr.toString();
+	}
+
+	@RequestMapping(value="feeds/random")
+	@ResponseBody
+	public String getRandomFeed(){
+		StringWriter retStr = new StringWriter();
+		RssLinkXML linkXml = RssLinkXML.convertRssLink(rssDao.getRandom());
+
+		try{
+			JAXBContext context = JAXBContext.newInstance(RssLinkXML.class);
+			Marshaller m = context.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+			m.marshal(linkXml, retStr);
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+		return retStr.toString();
+	}
+
+	@RequestMapping("feed/articles")
+	@ResponseBody
+	public String returnArticles(HttpSession session){
+		String retBody = "";
+
+		Integer userId = (Integer)session.getAttribute("userId");
+		if(userId != null){
+			retBody = getArticles(userId);
+		} else {
+			retBody = getArticles();
+		}
+
+		return retBody;
+	}
+
+	public String getArticles(int id){
+		StringWriter retStr = new StringWriter();
+
+		retStr.write("<Articles>");
+
+		try {
+			JAXBContext context = JAXBContext.newInstance(ArticleXml.class);
+			Marshaller m = context.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			m.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+
+			User u = uDao.findById(id).get();
+
+			ArticleFetcher fetcher = new ArticleFetcher();
+			for(RssLink link : u.getRssLinks()){
+				fetcher.fetchFeed(link);
+			}
+
+			for(Article article : fetcher.getArticleList()){
+				ArticleXml xml = ArticleXml.convertArticle(article);
+				m.marshal(xml, retStr);
+			}
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		retStr.write("</Articles>");
+		return retStr.toString();
+	}
+
+	public String getArticles(){
+		StringWriter retString = new StringWriter();
+
+		try {
+			RssLink link = rssDao.getRandom();
+
+			ArticleFetcher fetcher = new ArticleFetcher();
+			fetcher.fetchFeed(link);
+
+			retString.write("<Articles>");
+
+			JAXBContext context = JAXBContext.newInstance(ArticleXml.class);
+			Marshaller m = context.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			m.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+
+			for(Article article : fetcher.getArticleList()){
+				ArticleXml articleXml = ArticleXml.convertArticle(article);
+
+				m.marshal(articleXml, retString);
+			}
+			retString.write("</Articles>");
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+		return retString.toString();
 	}
 }

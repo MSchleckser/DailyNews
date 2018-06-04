@@ -4,9 +4,16 @@
 </head>
 <body>
     <nav th:replace = "fragments :: navigation"></nav>
+
     <div class="table-striped table-responsive container" style="margin-top: 2%; margin-bottom: 2%;">
+
+        <select style="margin: 2% 0%" class = "publisherSelector">
+            <option value = "All" selected="selected">All</option>
+        </select>
+
         <div th:unless = "${session.containsKey('username') == null}" th:text = "${session.username}"></div>
-        <table class = "table table-striped" style = "max-width:1200px;">
+
+        <table id="articleTable" class = "table table-striped" style = "max-width:1200px;">
             <col width="130">
             <col width="200">
             <col width="8">
@@ -23,6 +30,74 @@
                 <td th:text = "${feed.datePublished}" scope="row"></td>
             </tr>
         </table>
+
     </div>
 </body>
+
+<script th:inline="javascript">
+
+    $(".publisherSelector").change(function(){
+    });
+
+    var articles = [];
+    var publishers = [];
+
+    $(document).ready(function(){
+        let path = "rest/feed/articles";
+
+        $.when($.get(path)).done(function(feedData){
+            articles = fetchArticles(feedData);
+            articles.forEach(function(article){
+                createTableRow(article);
+            });
+        });
+    });
+
+    function fetchArticles(data){
+        var retArticles = [];
+
+        xmlDoc = $.parseXML(data);
+        $xml = $( xmlDoc );
+
+        $articles = $xml.find("Articles");
+        
+        $("articleXml", $articles).each(function(i, element) {
+            var nArticle = new Article(element);
+            addPublisher(nArticle);
+            retArticles.push(nArticle);
+        });
+
+        return retArticles;
+    }
+
+    function createTableRow(article){
+        var row = "<tr>\n";
+            row += "<td scope\"row\"><a href = \"" + article.link + "\">" + article.title + "</a></td>";
+            row += "<td>" + article.description + "</td>";
+            row += "<td>" + article.date + "</td>";
+        row += "</tr>";
+
+        $("#articleTable").append(row);
+    }
+
+    function addPublisher(article){
+
+        if($.inArray(article.publisher, publishers) == -1){
+            publishers.push(article.publisher);
+        }
+
+    }
+
+    class Article {
+        constructor(element) {
+            this.title = $(element).find("title").text();
+            this.description = $(element).find("description").text();
+            this.author = $(element).find("author").text();
+            this.link = $(element).find("link").text();
+            this.date = $(element).find("date").text();
+            this.publisher = $(element).find("publisher").text();
+        }
+    }
+
+</script>
 </html>

@@ -1,4 +1,4 @@
-package com.dailynews.DailyNews.models.restwrappers;
+package com.dailynews.DailyNews.models.xmlwrappers;
 
 import com.dailynews.DailyNews.models.rssfeeds.rsslink.RssLink;
 
@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "link")
 @XmlAccessorType(XmlAccessType.NONE)
-public class RssLinkRest {
+public class RssLinkXML {
 
 	private int id;
 
@@ -19,12 +19,12 @@ public class RssLinkRest {
 
 	private String publisher;
 
-	private RssLinkRest(){
+	private RssLinkXML(){
 
 	}
 
-	public static RssLinkRest convertRssLink(RssLink rssLink){
-		RssLinkRest nRest = new RssLinkRest();
+	public static RssLinkXML convertRssLink(RssLink rssLink){
+		RssLinkXML nRest = new RssLinkXML();
 
 		nRest.id = rssLink.getId();
 		nRest.title = rssLink.getTitle();

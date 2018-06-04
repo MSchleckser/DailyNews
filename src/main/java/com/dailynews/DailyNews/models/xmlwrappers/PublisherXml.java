@@ -1,4 +1,4 @@
-package com.dailynews.DailyNews.models.restwrappers;
+package com.dailynews.DailyNews.models.xmlwrappers;
 
 import com.dailynews.DailyNews.models.rssfeeds.rsslink.RssLink;
 import com.dailynews.DailyNews.models.rssfeeds.rsslink.publisher.Publisher;
@@ -7,9 +7,9 @@ import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 
 @XmlRootElement
-@XmlSeeAlso(RssLinkRest.class)
+@XmlSeeAlso(RssLinkXML.class)
 @XmlAccessorType(XmlAccessType.NONE)
-public class PublisherRest {
+public class PublisherXml {
 
 	@XmlElement
 	private int id;
@@ -19,20 +19,20 @@ public class PublisherRest {
 
 	@XmlElementWrapper(name="links")
 	@XmlElement(name="link")
-	private ArrayList<RssLinkRest> rssLinks = new ArrayList<>();
+	private ArrayList<RssLinkXML> rssLinks = new ArrayList<>();
 
-	private PublisherRest(){
+	private PublisherXml(){
 
 	}
 
-	public static PublisherRest convertPublisher(Publisher publisher){
-		PublisherRest nPub = new PublisherRest();
+	public static PublisherXml convertPublisher(Publisher publisher){
+		PublisherXml nPub = new PublisherXml();
 
 		nPub.id = publisher.getId();
 		nPub.name = publisher.getName();
 
 		for(RssLink link : publisher.getLinks()){
-			nPub.rssLinks.add(RssLinkRest.convertRssLink(link));
+			nPub.rssLinks.add(RssLinkXML.convertRssLink(link));
 		}
 
 		return nPub;
@@ -54,11 +54,11 @@ public class PublisherRest {
 		this.name = name;
 	}
 
-	public ArrayList<RssLinkRest> getRssLinks() {
+	public ArrayList<RssLinkXML> getRssLinks() {
 		return rssLinks;
 	}
 
-	public void setRssLinks(ArrayList<RssLinkRest> rssLinks) {
+	public void setRssLinks(ArrayList<RssLinkXML> rssLinks) {
 		this.rssLinks = rssLinks;
 	}
 }

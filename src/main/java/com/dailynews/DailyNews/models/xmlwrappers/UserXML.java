@@ -1,4 +1,4 @@
-package com.dailynews.DailyNews.models.restwrappers;
+package com.dailynews.DailyNews.models.xmlwrappers;
 
 import com.dailynews.DailyNews.models.rssfeeds.rsslink.RssLink;
 import com.dailynews.DailyNews.models.user.User;
@@ -7,9 +7,9 @@ import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 
 @XmlRootElement(name = "user")
-@XmlSeeAlso(RssLinkRest.class)
+@XmlSeeAlso(RssLinkXML.class)
 @XmlAccessorType(XmlAccessType.NONE)
-public class UserRest {
+public class UserXML {
 
 	@XmlElement
 	private int id;
@@ -20,20 +20,20 @@ public class UserRest {
 	@XmlElement
 	private String role;
 
-	private ArrayList<RssLinkRest> rssLinks = new ArrayList<>();
+	private ArrayList<RssLinkXML> rssLinks = new ArrayList<>();
 
-	public static UserRest convertUser(User user){
-		UserRest userRest = new UserRest();
+	public static UserXML convertUser(User user){
+		UserXML userXml = new UserXML();
 
-		userRest.id = user.getId();
-		userRest.username = user.getUsername();
-		userRest.role = user.getRole().getName();
+		userXml.id = user.getId();
+		userXml.username = user.getUsername();
+		userXml.role = user.getRole().getName();
 
 		for(RssLink link : user.getRssLinks()){
-			userRest.rssLinks.add(RssLinkRest.convertRssLink(link));
+			userXml.rssLinks.add(RssLinkXML.convertRssLink(link));
 		}
 
-		return userRest;
+		return userXml;
 	}
 
 	public int getId() {
@@ -50,8 +50,8 @@ public class UserRest {
 
 	@XmlElementWrapper(name = "links")
 	@XmlElement(name = "link")
-	public RssLinkRest[] getRssLinks() {
-		RssLinkRest[] retArr = new RssLinkRest[rssLinks.size()];
+	public RssLinkXML[] getRssLinks() {
+		RssLinkXML[] retArr = new RssLinkXML[rssLinks.size()];
 
 		for(int i = 0; i < rssLinks.size(); i++){
 			retArr[i] = rssLinks.get(i);

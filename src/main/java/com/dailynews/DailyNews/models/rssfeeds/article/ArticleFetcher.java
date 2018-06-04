@@ -1,5 +1,6 @@
 package com.dailynews.DailyNews.models.rssfeeds.article;
 
+import com.dailynews.DailyNews.models.rssfeeds.rsslink.RssLink;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
@@ -19,9 +20,11 @@ public class ArticleFetcher {
 
 	}
 
-	public void fetchFeed(URL url){
+	public void fetchFeed(RssLink link){
 
 		try {
+			URL url = link.getRssUrl();
+
 			SyndFeedInput input = new SyndFeedInput();
 			SyndFeed syndFeed = input.build(new XmlReader(url));
 			int i = 0;
@@ -33,6 +36,7 @@ public class ArticleFetcher {
 				f.setAuthor(article.getAuthor());
 				f.setLink(article.getLink());
 				f.setDatePublished(article.getPublishedDate());
+				f.setPublisher(link.getPublisher().getName());
 
 				articleList.add(f);
 			}

@@ -11,6 +11,7 @@ public class Article implements Comparator<Article>, Comparable<Article> {
 	private String author;
 	private String link;
 	private Date datePublished;
+	private String publisher;
 
 	public String getTitle() {
 		return title;
@@ -56,6 +57,14 @@ public class Article implements Comparator<Article>, Comparable<Article> {
 
 	public void setDatePublished(Date datePublished){
 		this.datePublished = datePublished;
+	}
+
+	public String getPublisher() {
+		return publisher;
+	}
+
+	public void setPublisher(String publisher) {
+		this.publisher = publisher;
 	}
 
 	@Override
