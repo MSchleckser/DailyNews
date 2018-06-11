@@ -7,7 +7,8 @@
 
     <div class="table-striped table-responsive container" style="margin-top: 2%; margin-bottom: 2%;">
 
-        <select style="margin: 2% 0%" class = "publisherSelector">
+        <label for="publisherSelector">Filter Feeds: </label>
+        <select style="margin: 2% 0%" name = "publisherSelector" class = "publisherSelector">
             <option value = "All" selected="selected">All</option>
         </select>
 
@@ -24,19 +25,25 @@
                     <th scope="col"><h3>Date</h3></th>
                 </tr>
             </thead>
-            <tr th:each = "feed : ${feedList}">
-                <td scope="row"><a th:href = "${feed.link}" th:text = "${feed.title}" scope="row">link</a></td>
-                <td th:utext = "${feed.description}" scope="row"></td>
-                <td th:text = "${feed.datePublished}" scope="row"></td>
-            </tr>
         </table>
 
     </div>
 </body>
 
-<script th:inline="javascript">
+<script>
 
     $(".publisherSelector").change(function(){
+        var publisher = $( this ).val();
+
+        $(".articleRow").each(function(i, element){
+            element.remove();
+        });
+
+        $.each(articles, function(i, article){
+            if(article.publisher == publisher){
+                createTableRow(article);
+            }
+        });
     });
 
     var articles = [];
@@ -51,6 +58,15 @@
                 createTableRow(article);
             });
         });
+
+        loginUser();
+    });
+
+    $("#logout").click(function(){
+        console.log("click");
+        clearCookies();
+        $.get("/logout");
+        window.location = "/";
     });
 
     function fetchArticles(data){
@@ -71,7 +87,7 @@
     }
 
     function createTableRow(article){
-        var row = "<tr>\n";
+        var row = "<tr class=\"articleRow\">\n";
             row += "<td scope\"row\"><a href = \"" + article.link + "\">" + article.title + "</a></td>";
             row += "<td>" + article.description + "</td>";
             row += "<td>" + article.date + "</td>";
@@ -84,8 +100,52 @@
 
         if($.inArray(article.publisher, publishers) == -1){
             publishers.push(article.publisher);
+            addPublisherRow(article.publisher);
         }
 
+    }
+
+    function addPublisherRow(publisher) {
+        var row = "<option value = \"" + publisher +"\">" + publisher + "</option>";
+        $(".publisherSelector").append(row);
+    }
+
+    function loginUser(){
+        if(getCookie("stayLoggedIn") == "1"){
+        console.log("test");
+            var username = getCookie("username");
+            var password = getCookie("password");
+            $.post("login/" + username + "/" + password)
+        }
+    }
+
+    function setCookie(cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        var expires = "expires="+ d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    function getCookie(cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for(var i = 0; i <ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+
+    function clearCookies(){
+        setCookie("stayLoggedIn", "0", -1);
+        setCookie("username", "", -1);
+        setCookie("password", "", -1);
     }
 
     class Article {

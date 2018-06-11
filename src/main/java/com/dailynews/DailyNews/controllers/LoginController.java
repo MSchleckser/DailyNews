@@ -5,10 +5,7 @@ import com.dailynews.DailyNews.models.user.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
@@ -28,18 +25,18 @@ public class LoginController {
 		return "login";
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.POST)
-	public String processLoginForm(@RequestParam String username, @RequestParam String password,
-								   HttpSession session) {
+	@RequestMapping(value = "{username}/{password}", method = RequestMethod.POST)
+	@ResponseBody
+	public String loginUser(@PathVariable String username, @PathVariable String password, HttpSession session){
 
 		Integer id = uDao.getUserId(username, password);
 
 		if(id == null) {
-			return "redirect:/login?errors=Password or Username is invalid&username=" + username;
+			return "Username or password is invalid";
 		}
 
 		session.setAttribute("userId", id);
 		session.setAttribute("role", uDao.findById(id).get().getRole().getName());
-		return "redirect:/";
+		return "success";
 	}
 }
