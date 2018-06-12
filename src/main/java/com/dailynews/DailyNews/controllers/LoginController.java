@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -25,9 +26,11 @@ public class LoginController {
 		return "login";
 	}
 
-	@RequestMapping(value = "{username}/{password}", method = RequestMethod.POST)
+	@RequestMapping(value = "", method = RequestMethod.POST)
 	@ResponseBody
-	public String loginUser(@PathVariable String username, @PathVariable String password, HttpSession session){
+	public String loginUser(@RequestParam("user") String username,
+							@RequestParam("pass") String password,
+							HttpSession session){
 
 		Integer id = uDao.getUserId(username, password);
 
