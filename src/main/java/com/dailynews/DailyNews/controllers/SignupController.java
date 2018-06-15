@@ -6,10 +6,7 @@ import com.dailynews.DailyNews.models.user.role.RoleDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,15 +32,43 @@ public class SignupController {
 	}
 
 	@RequestMapping(value = "", method = RequestMethod.POST)
-	public String processUserSignup(@ModelAttribute @Valid User user){
+	@ResponseBody
+	public String processUserSignup(@RequestParam("username") String username,
+									@RequestParam("password") String password){
 
-		if(uDao.getUserId(user.getUsername()) != null){
-			return "redirect:/register?errors=Username already exists&username="+user.getUsername();
+		String error = "";
+		if(uDao.getUserId(username) != null){
+			System.out.println("exists");
+			error+="Username already exists.";
+		} else if (username.isEmpty()){
+			System.out.println("too short username");
+			error += "Please enter a valid username.";
 		}
 
-		user.setRole(rDao.findById(1).get());
-		uDao.save(user);
+		if(password.length() < 8){
+			if(!error.isEmpty()){
+				error += " ";
+			}
+			System.out.println("too short password");
+			error += "Password must be over 8 characters long.";
+		}
 
-		return "redirect:/login";
+		if(error.isEmpty()){
+			System.out.println("Create User");
+			error = registerUser(username, password);
+		}
+
+		return error.isEmpty() ? registerUser(username, password) : error;
+	}
+
+	private String registerUser(String username, String password){
+		User u = new User();
+		u.setUsername(username);
+		u.setPassword(password);
+		u.setRole(rDao.findById(1).get());
+
+		uDao.save(u);
+
+		return "success";
 	}
 }

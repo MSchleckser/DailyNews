@@ -5,26 +5,34 @@ $(document).ready(function(){
 $("#loginBtn").click(function(event){
     var username = $("#username").val();
     var password = $("#password").val();
+    login(username, password);
+    event.preventDefault();
+    
+});
+
+function login(username, password){
     $.post("login?user=" + username + "&pass=" + password, function(data){
         if(data == "success"){
-            if($("#stay-loggedIn").is(":checked")){
-                setCookie("stayLoggedIn", "1", 30);
-                setCookie("username", username, 30);
-                setCookie("password", password, 30);
-            } else {
-                setCookie("stayLoggedIn", "0", -1);
-                setCookie("username", username, -1);
-                setCookie("password", password, -1);
-            }
-
+            console.log(document.getElementById("stay-loggedIn").checked);
+            updateCookies(document.getElementById("stay-loggedIn").checked);
             window.location = "/";
         } else {
             displayError(data);
         }
     });
-    event.preventDefault();
-    
-});
+}
+
+function updateCookies(stayLoggedIn){
+    if(stayLoggedIn){
+        setCookie("stayLoggedIn", "1", 30);
+        setCookie("username", username, 30);
+        setCookie("password", password, 30);
+    } else {
+        setCookie("stayLoggedIn", "0", -1);
+        setCookie("username", username, -1);
+        setCookie("password", password, -1);
+    }
+}
 
 $("#errorMessage").click(function(){
     $("#errorMessage").text("");
