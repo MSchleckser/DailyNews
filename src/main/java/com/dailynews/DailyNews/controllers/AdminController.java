@@ -7,10 +7,7 @@ import com.dailynews.DailyNews.models.rssfeeds.rsslink.publisher.PublisherDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -41,11 +38,18 @@ public class AdminController {
 	}
 
 	@RequestMapping(value = "/addPublisher", method = RequestMethod.POST)
-	public String processAddPublisher(@ModelAttribute @Valid Publisher publisher){
+	@ResponseBody
+	public String processAddPublisher(@RequestParam("publisher") String publisherName){
+
+		if(pDao.doesPublisherExist(publisherName))
+			return publisherName + " already exists.";
+
+		Publisher publisher = new Publisher();
+		publisher.setName(publisherName);
 
 		pDao.save(publisher);
 
-		return "redirect:/admin";
+		return "added";
 	}
 
 	@RequestMapping(value = "/removePublisher", method = RequestMethod.POST)

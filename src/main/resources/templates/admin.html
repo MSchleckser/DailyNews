@@ -16,9 +16,9 @@
             <h1 class="display-5 form_header">Add Publisher</h1>
             <div class="form-group">
                 <label th:for="username">Publisher</label>
-                <input class="form-control" th:field="*{name}"/>
+                <input class="form-control" id="pubName" th:field="*{name}"/>
             </div>
-            <input type="submit" value="Add" class="form-control w-25"/>
+            <input type="submit" value="Add" id="addPub" class="form-control w-25"/>
         </form>
 
         <hr style="margin: .1%; margin-left: 1%; max-width: 400px;"/>
@@ -68,4 +68,16 @@
         </form>
     </span>
 </body>
+
+<script>
+    $("#addPub").click(function(event) {
+        var pub = $("#pubName").val();
+
+        $.post("admin/addPublisher?publisher=" + pub, function(data){
+            console.log(data);
+        });
+        
+        event.preventDefault();
+    });
+</script>
 </html>
