@@ -5,48 +5,19 @@
 </head>
 
 <style>
-    #errorMessage {
-        background-color: red;
-        box-shadow: 5px 5px rgb(88, 4, 4);
-        color: white;
-
-        position: absolute;
-        margin: 15% auto;
-
-        top: 10%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-
-        min-width: 150px;
-        min-height: 150ox;
-        padding: 2%;
-
-        font-size: 1.2em;
-
-        cursor: pointer;
+    .form {
+        padding: 2.5%;
+        padding-top: 0%;
+        color: black;
+        margin-top: 2%;
     }
 
-    #errorMessage::before{
-        content: "ZOINKS! \A";
-        white-space: pre;
-        font-size: 2em;
-        font-weight: bold;
+    form{
+        min-width: 200px;
+        max-width: 30%;
     }
-
-    #errorMessage::after {
-        content: "\A Close Message";
-        display: block;
-        background-color: white;
-        color: red;
-        text-align: center;
-        width: 10em;
-        padding: 2%;
-        margin: 1% auto;
-        font-size: .8em;
-    }
-
-    #errorMessage:empty {
-        display: none;
+    form::before{
+        max-width: 30%;
     }
 </style>
 
@@ -55,18 +26,18 @@
 
     <div id="errorMessage"></div>
 
-    <form method="post" class="container form w-25" th:action="@{/register}" th:object="${user}">
+    <form method="post" class="container form w-25">
         <h1 class="display-5 form_header">Sign-Up</h1>
 
-        <div class="form-group mb-3">
-            <input th:field = "*{username}" th:value="${username}" class="form-control" placeholder="Username"/>
+        <div class="form-group">
+            <input id="username" class="form-control" placeholder="Username"/>
         </div>
 
-        <div class="form-group mb-3">
-            <input th:field = "*{password}" type="password" class="form-control" placeholder="Password"/>
+        <div class="form-group">
+            <input id="password" type = "password" class="form-control" placeholder="Password"/>
         </div>
-        <div class="form-group mb-3">
-            <input type="password" class="form-control" id="vPassword" placeholder="Re-Enter Password"/>
+        <div class="form-group">
+            <input id="vPassword" type="password" class="form-control" placeholder="Re-Enter Password"/>
         </div>
 
         <button type="submit" class="btn btn-primary btn-lg btn-block w-50" id="loginButton">Submit</button>
@@ -78,46 +49,24 @@
 <script>
     document.getElementById("loginButton").addEventListener("click", function(event){
 
-        let error = "";
-        error += validateUsername();
-        error += validatePasswords();
-        
-        if(error.length > 0){
-            displayError(error);
-            event.preventDefault();
-        }
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
+        var vPassword = document.getElementById("vPassword");
+
+        register(username, password);
+
+        event.preventDefault();
     });
 
-    document.getElementById("errorMessage").addEventListener("click", function(event){
-        document.getElementById("errorMessage").innerHTML = "";
-    });
-
-    function validateUsername(){
-        let username = document.getElementById("username").value;
-
-        if(username.length == 0){
-            return "Please enter a username. ";
-        }
-
-        return "";
-    }
-
-    function validatePasswords(){
-        let pass = document.getElementById("password").value;
-        let vPass = document.getElementById("vPassword").value;
-
-        let retError = "";
-
-        if(pass != vPass){
-            retError += "Password fields must match. ";
-        }
-
-        if(pass.length < 8){
-            retError += "Password is too short, it must be at least 8 letters long. ";
-        }
-        console.log(retError);
-
-        return retError;
+    function register(username, password){
+        $.post("register?username=" + username + "&password=" + password, function(data){
+            console.log("posty toasty");
+            if(data != "success"){
+                displayError(data);
+            } else {
+                window.location = "/login";
+            }
+        });
     }
 
     function displayError(errorMessage){
@@ -143,5 +92,10 @@
         displayError(errors);
         document.getElementById("username").value = username;
     }
+
+    $("#errorMessage").click(function(){
+        $("#errorMessage").text("");
+        $("#password").val("");
+    });
 </script>
 </html>
