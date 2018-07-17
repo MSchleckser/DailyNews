@@ -13,6 +13,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Random;
@@ -27,7 +30,7 @@ public class IndexController {
 	private PublisherDao pDao;
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
-	public String displayIndex(Model model, HttpSession session){
+	public String displayIndex(Model model, HttpSession session, HttpServletRequest request){
 		model.addAttribute("title", "Daily News");
 		model.addAttribute("username", session.getAttribute("username"));
 

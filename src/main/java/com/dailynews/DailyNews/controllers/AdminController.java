@@ -52,39 +52,6 @@ public class AdminController {
 		return "added";
 	}
 
-	@RequestMapping(value = "/removePublisher", method = RequestMethod.POST)
-	public String processRemovePublisher(@RequestParam ArrayList<Integer> idList){
-
-		for(Integer id : idList){
-			pDao.deleteById(id);
-		}
-
-		return "redirect:/admin";
-	}
-
-	@RequestMapping(value = "/addLink", method = RequestMethod.POST)
-	public String processAddLink(@RequestParam Integer publisherId,
-								 @RequestParam String linkStr,
-								 @RequestParam String linkTitle){
-		if(!pDao.existsById(publisherId))
-			return "redirect:/admin";
-
-		RssLink link = new RssLink();
-
-		try {
-			link.setRssUrl(new URL(linkStr));
-			link.setTitle(linkTitle);
-			rssDao.save(link);
-		} catch (MalformedURLException e) {
-			return "redirect:/admin";
-		}
-
-		Publisher p = pDao.findById(publisherId).get();
-		p.links.add(link);
-		pDao.save(p);
-
-		return "redirect:/admin";
-	}
 
 	@RequestMapping(value = "/removeLink", method = RequestMethod.POST)
 	public String removeLink(@RequestParam ArrayList<Integer> rssIds){

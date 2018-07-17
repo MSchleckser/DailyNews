@@ -5,51 +5,53 @@
 <body>
     <nav th:replace = "fragments :: navigation"></nav>
 
+    <div id="errorMessage"></div>
+
     <span class="container form">
         <div class="page-header" style = "margin: 1.8%;">
             <h1>Administrator Panel</h1>
         </div>
 
         <hr style="margin: .1%; margin-left: 1%; max-width: 400px;"/>
-        
-        <form method="post"  th:action="@{/admin/addPublisher}" th:object="${publisher}" class="form-group w-25" style="margin: 1%">
+        <div class="form-group w-25" style="margin: 1%">
             <h1 class="display-5 form_header">Add Publisher</h1>
             <div class="form-group">
                 <label th:for="username">Publisher</label>
-                <input class="form-control" id="pubName" th:field="*{name}"/>
+                <input class="form-control" id="pubName"/>
             </div>
             <input type="submit" value="Add" id="addPub" class="form-control w-25"/>
-        </form>
+        </div>
 
         <hr style="margin: .1%; margin-left: 1%; max-width: 400px;"/>
 
-        <form method="post"  th:action="@{/admin/removePublisher}"  th:unless="${publishers.isEmpty()}" class="form-group w-25" style="margin: 1%">
+        <div class="form-group w-25" style="margin: 1%">
             <h1 class="display-5 form_header">Remove Publisher</h1>
-                <ul class="list-group" th:each="p : ${publishers}">
-                    <li class="list-group-item"><input type="checkbox" name = "idList" th:text="${p.name}" th:value="${p.id}"/></li>
-                </ul>
-            <input type="submit" value="Remove" class="form-control w-25"/>
-        </form>
+            <div class="table-striped table-responsive container" style="margin-top: 2%; margin-bottom: 2%;">
+                <table class = "table table-striped" id="removePublisherTable" style = "max-width:80%;">
+                    <col width="130"/>
+                    <col width="20"/>
+                </table>
+            </div>
+        </div>
 
         <hr style="margin: .1%; margin-left: 1%; max-width: 400px;"/>
 
-        <form method="post"  th:action="@{/admin/addLink}"  th:unless="${publishers.isEmpty()}" class="form-group w-25" style="margin: 1%">
+        <form class="form-group w-25" style="margin: 1%">
             <h1 class="display-5 form_header">Add Link</h1>
             <div class="form-group">
-                <select name="publisherId"  class="form-control" id="publisherDd">
-                    <option th:each="p : ${publishers}" th:text="${p.name}" th:value="${p.id}"></option>
+                <select name="publisherDd"  class="form-control" id="publisherDd">
                 </select>
 
                 <div class="form-group">
                     <label for="linkTitle">Title</label>
-                    <input type="text" name="linkTitle" class="form-control"/>
+                    <input type="text" name="linkTitle" class="form-control" id = "linkTitle"/>
                 </div>
 
                 <div class="form-group">
-                    <label for="linkStr">Link</label>
-                    <input type="text" name="linkStr" class="form-control"/>
+                    <label for="linkUrl">Link</label>
+                    <input type="text" name="linkUrl" class="form-control" id = "linkUrl"/>
                 </div>
-                <input type="submit" value="Add" class="form-control w-25"/>
+                <input type="submit" value="Add" class="form-control w-25" id="addLinkSub"/>
             </div>
         </form>
 
@@ -70,14 +72,93 @@
 </body>
 
 <script>
+    $(document).ready(function(){
+
+        $.get("rest/admin/getPublishers", function(data){
+            var list = fetchFeeds(data);
+
+            for(p in list){
+                createPublisher(list[p]);
+            }
+        });
+
+    });
+
     $("#addPub").click(function(event) {
         var pub = $("#pubName").val();
 
         $.post("admin/addPublisher?publisher=" + pub, function(data){
-            console.log(data);
+            if(data != "added"){
+                displayError(data);
+            }
         });
         
         event.preventDefault();
     });
+    
+    $("#errorMessage").click(function(){
+        $("#errorMessage").text("");
+        $("#password").val("");
+    });
+
+    $("#addLinkSub").click(function(event){
+
+        let url ="rest/admin/addLink"+
+            "?PubId=" + $("#publisherDd").find(":selected").val() + 
+            "&Title=" + $("#linkTitle").val() +
+            "&Link=" + $("#linkUrl").val();
+        
+        console.log(url);
+        $.post(url, function(data){
+            console.log(data);
+        });
+
+        event.preventDefault();
+    });
+
+    function displayError(errorMessage){
+        document.getElementById("errorMessage").innerText = errorMessage;
+    }
+
+    function createPublisher(publisher){
+        let removeRow = "<tr id=\"" + publisher.id + "\" scope = \"row\">";
+
+        removeRow += "<td>" + publisher.title + "</td>";
+        removeRow += "<td class=\"button\">" + "<span class=\"glyphicon glyphicon-remove\" onClick=\"removePublisher(" + publisher.id + ")\"/>" + "</td>";
+        removeRow += "</tr>";
+
+        $("#removePublisherTable").append(removeRow);
+
+        let addOption = "<option value=" + publisher.id + ">" + publisher.title + "</option>"
+        $("#publisherDd").append($("<option id=\"Dd" + publisher.id + "\"></option>").html(publisher.title).val(publisher.id));
+    }
+
+    function fetchFeeds(data){
+        var retPublishers = [];
+
+        xmlDoc = $.parseXML(data);
+        $xml = $( xmlDoc );
+
+        $publishers = $xml.find("Publishers");
+        
+        $("publisher", $publishers).each(function(i, element) {
+            var nPub = new Publisher(element);
+            retPublishers.push(nPub);
+        })
+
+        return retPublishers;
+    }
+
+    function removePublisher(id){
+        $("#" + id).remove();
+        $("#Dd" + id).remove();
+    }
+
+    class Publisher {
+        constructor(element){
+            this.id= $(element).find("id").text();
+            this.title= $(element).find("title").text();
+        }
+    }
 </script>
 </html>

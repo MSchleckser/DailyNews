@@ -1,3 +1,5 @@
+
+
 function createTableRow(element){
     let feedRow = "<tr id=\"" + element.id + "\" scope = \"row\">";
 
@@ -16,7 +18,7 @@ function createTableRow(element){
 }
 
 function subscribe(id){
-    $.get("rest/user/subscribe/" + id, function(success){
+    $.get("/rest/managefeeds/user/subscribe/" + id, function(success){
         var button = $("#" + id).children(".button").children("span");
         button.val("Unsubscribe");
         button.attr("onClick", "unsubscribe(" + id + ")");
@@ -26,7 +28,7 @@ function subscribe(id){
 }
 
 function unsubscribe(id){
-    $.get("rest/user/unsubscribe/" + id, function(success){
+    $.get("rest/managefeeds/user/unsubscribe/" + id, function(success){
         if(success) {
             var button = $("#" + id).children(".button").children("span");
             button.val("Subscribe");

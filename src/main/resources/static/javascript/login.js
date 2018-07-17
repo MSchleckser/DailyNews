@@ -5,6 +5,8 @@ $(document).ready(function(){
 $("#loginBtn").click(function(event){
     var username = $("#username").val();
     var password = $("#password").val();
+    password = encodeURIComponent(password);
+
     $.post("login?user=" + username + "&pass=" + password, function(data){
         if(data == "success"){
             if($("#stay-loggedIn").is(":checked")){
@@ -12,17 +14,17 @@ $("#loginBtn").click(function(event){
                 setCookie("username", username, 30);
                 setCookie("password", password, 30);
             } else {
+
                 setCookie("stayLoggedIn", "0", -1);
                 setCookie("username", username, -1);
                 setCookie("password", password, -1);
             }
-
             window.location = "/";
         } else {
             displayError(data);
         }
     });
-    event.preventDefault();
+    event.preventDefault(); 
     
 });
 

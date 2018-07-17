@@ -105,7 +105,7 @@ public class ManageRestController {
 		return retString.toString();
 	}
 
-	@RequestMapping(value="user/unsubscribe/{feedId}")
+	@RequestMapping(value="managefeeds/user/unsubscribe/{feedId}")
 	@ResponseBody
 	public boolean unsubscribe(@PathVariable int feedId, HttpSession session){
 		User u = uDao.findById((Integer) session.getAttribute("userId")).get();
@@ -121,7 +121,7 @@ public class ManageRestController {
 		return success;
 	}
 
-	@RequestMapping(value="user/subscribe/{feedId}")
+	@RequestMapping(value="managefeeds/user/subscribe/{feedId}")
 	@ResponseBody
 	public boolean subscribe(@PathVariable int feedId, HttpSession session){
 		User u = uDao.findById((Integer) session.getAttribute("userId")).get();
@@ -156,7 +156,7 @@ public class ManageRestController {
 		return retStr;
 	}
 
-	@RequestMapping(value="/feeds/articles")
+	@RequestMapping(value="feeds/articles")
 	@ResponseBody
 	public String getUserArticles(HttpSession session){
 		StringWriter retStr = new StringWriter();
