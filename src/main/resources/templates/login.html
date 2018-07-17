@@ -24,10 +24,8 @@
     <nav th:replace = "fragments :: navigation"></nav>
 
     <div id="errorMessage"></div>
-
-    <div th:if="${param.error}">Invalid username or password.</div>
     
-    <form method="post" class="container form w-25" th:action="@{/login}" th:object = "${user}">
+    <form method="post" class="container form w-25">
         <h1 class="display-5 form_header">Login</h1>
         <div class="form-group">
             <label for="username">Username</label>

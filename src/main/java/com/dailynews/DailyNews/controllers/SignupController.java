@@ -31,7 +31,7 @@ public class SignupController {
 		return "usersignup";
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.POST)
+	@RequestMapping(value = "newuser")
 	@ResponseBody
 	public String processUserSignup(@RequestParam("username") String username,
 									@RequestParam("password") String password){

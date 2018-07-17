@@ -50,8 +50,11 @@
     document.getElementById("loginButton").addEventListener("click", function(event){
 
         var username = document.getElementById("username").value;
+        console.log(username);
         var password = document.getElementById("password").value;
-        var vPassword = document.getElementById("vPassword");
+        console.log(password);
+        var vPassword = document.getElementById("vPassword").value;
+        console.log(vPassword);
 
         register(username, password);
 
@@ -59,8 +62,9 @@
     });
 
     function register(username, password){
-        $.post("register?username=" + username + "&password=" + password, function(data){
-            console.log("posty toasty");
+        console.log("register/newuser?username=" + username + "&password=" + password);
+        $.post("register/newuser?username=" + username + "&password=" + password, function(data){
+            console.log(data);
             if(data != "success"){
                 displayError(data);
             } else {
