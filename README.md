@@ -14,3 +14,6 @@ Java Spring, Hibernate, jQuery, SQL
 
 # Need to learn
 Secure password handling
+
+# Project Tracker
+https://trello.com/dailynews3
