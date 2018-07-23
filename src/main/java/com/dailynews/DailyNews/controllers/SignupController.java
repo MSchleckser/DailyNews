@@ -31,17 +31,17 @@ public class SignupController {
 		return "usersignup";
 	}
 
-	@RequestMapping(value = "newuser")
+	@RequestMapping(value = "", method = RequestMethod.POST)
 	@ResponseBody
-	public String processUserSignup(@RequestParam("username") String username,
-									@RequestParam("password") String password){
+	public String processUserSignup(HttpServletRequest request){
+
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
 
 		String error = "";
 		if(uDao.getUserId(username) != null){
-			System.out.println("exists");
 			error+="Username already exists.";
 		} else if (username.isEmpty()){
-			System.out.println("too short username");
 			error += "Please enter a valid username.";
 		}
 
@@ -49,12 +49,10 @@ public class SignupController {
 			if(!error.isEmpty()){
 				error += " ";
 			}
-			System.out.println("too short password");
 			error += "Password must be over 8 characters long.";
 		}
 
 		if(error.isEmpty()){
-			System.out.println("Create User");
 			error = registerUser(username, password);
 		}
 

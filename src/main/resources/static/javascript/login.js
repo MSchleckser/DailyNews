@@ -5,9 +5,8 @@ $(document).ready(function(){
 $("#loginBtn").click(function(event){
     var username = $("#username").val();
     var password = $("#password").val();
-    password = encodeURIComponent(password);
 
-    $.post("login?user=" + username + "&pass=" + password, function(data){
+    $.post("login", {username: username, password: password}, function(data){
         if(data == "success"){
             if($("#stay-loggedIn").is(":checked")){
                 setCookie("stayLoggedIn", "1", 30);

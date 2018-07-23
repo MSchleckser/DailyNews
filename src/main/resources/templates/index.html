@@ -13,8 +13,6 @@
             <option value = "All" selected="selected">All</option>
         </select>
 
-        <div th:unless = "${session.containsKey('username') == null}" th:text = "${session.username}"></div>
-
         <table id="articleTable" class = "table table-striped" style = "max-width:1200px;">
             <col width="130">
             <col width="200">
@@ -40,11 +38,17 @@
             element.remove();
         });
 
-        $.each(articles, function(i, article){
-            if(article.publisher == publisher){
-                createTableRow(article);
-            }
-        });
+        if(publisher == "All"){
+            $.each(articles, function(i, article){
+                    createTableRow(article);
+            });
+        } else {
+            $.each(articles, function(i, article){
+                if(article.publisher == publisher){
+                    createTableRow(article);
+                }
+            });
+        }
     });
 
     var articles = [];

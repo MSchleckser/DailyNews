@@ -28,9 +28,11 @@ public class LoginController {
 
 	@RequestMapping(value = "", method = RequestMethod.POST)
 	@ResponseBody
-	public String loginUser(@RequestParam("user") String username,
-							@RequestParam("pass") String password,
+	public String loginUser(HttpServletRequest request,
 							HttpSession session){
+
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
 
 		Integer id = uDao.getUserId(username, password);
 

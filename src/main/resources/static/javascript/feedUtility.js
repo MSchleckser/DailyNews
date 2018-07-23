@@ -18,7 +18,7 @@ function createTableRow(element){
 }
 
 function subscribe(id){
-    $.get("/rest/managefeeds/user/subscribe/" + id, function(success){
+    $.get("/rest/managefeeds/user/subscribe", {id: id}, function(success){
         var button = $("#" + id).children(".button").children("span");
         button.val("Unsubscribe");
         button.attr("onClick", "unsubscribe(" + id + ")");
@@ -28,7 +28,7 @@ function subscribe(id){
 }
 
 function unsubscribe(id){
-    $.get("rest/managefeeds/user/unsubscribe/" + id, function(success){
+    $.get("rest/managefeeds/user/unsubscribe", {id: id}, function(success){
         if(success) {
             var button = $("#" + id).children(".button").children("span");
             button.val("Subscribe");

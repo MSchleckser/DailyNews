@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -105,9 +106,11 @@ public class ManageRestController {
 		return retString.toString();
 	}
 
-	@RequestMapping(value="managefeeds/user/unsubscribe/{feedId}")
+	@RequestMapping(value="managefeeds/user/unsubscribe")
 	@ResponseBody
-	public boolean unsubscribe(@PathVariable int feedId, HttpSession session){
+	public boolean unsubscribe(HttpServletRequest request, HttpSession session){
+		int feedId = Integer.valueOf(request.getParameter("id"));
+
 		User u = uDao.findById((Integer) session.getAttribute("userId")).get();
 		RssLink link = rssDao.findById(feedId).get();
 		boolean success = false;
@@ -121,9 +124,11 @@ public class ManageRestController {
 		return success;
 	}
 
-	@RequestMapping(value="managefeeds/user/subscribe/{feedId}")
+	@RequestMapping(value="managefeeds/user/subscribe")
 	@ResponseBody
-	public boolean subscribe(@PathVariable int feedId, HttpSession session){
+	public boolean subscribe(HttpServletRequest request, HttpSession session){
+		int feedId = Integer.valueOf(request.getParameter("id"));
+
 		User u = uDao.findById((Integer) session.getAttribute("userId")).get();
 		RssLink link = rssDao.findById(feedId).get();
 

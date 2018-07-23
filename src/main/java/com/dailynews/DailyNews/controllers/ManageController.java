@@ -53,8 +53,6 @@ public class ManageController {
 
 	@RequestMapping(value = "remove", method = RequestMethod.POST)
 	public String removeManageFeedForm(@RequestParam ArrayList<Integer> removeRssIds, HttpSession session){
-
-		System.out.println(removeRssIds);
 		User u = uDao.findById((Integer)session.getAttribute("userId")).get();
 		u.removeAllRssLinksById(removeRssIds);
 		uDao.save(u);
