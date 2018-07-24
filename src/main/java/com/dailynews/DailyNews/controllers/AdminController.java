@@ -9,11 +9,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/admin")
@@ -61,5 +63,23 @@ public class AdminController {
 		}
 
 		return "redirect:/admin";
+	}
+
+	@RequestMapping(value = "/removePublisher", method = RequestMethod.POST)
+	@ResponseBody
+	public  String removePublisher(ServletRequest request){
+		String error = "";
+
+		int pubId = Integer.parseInt(request.getParameter("id"));
+
+		Optional<Publisher> optionalPub = pDao.findById(pubId);
+
+		if(optionalPub.isPresent()){
+			return "deleted";
+		} else {
+			error = "publisher does not exist.";
+		}
+
+		return error;
 	}
 }

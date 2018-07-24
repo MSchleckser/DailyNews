@@ -5,6 +5,7 @@
 <body>
     <nav th:replace = "fragments :: navigation"></nav>
 
+    <div style="font-size: 4em; color: red">WIP: jQuery back being hooked up. Nothing works yet.</div>
     <div id="errorMessage"></div>
 
     <span class="container form">
@@ -57,16 +58,9 @@
 
         <hr style="margin: .1%; margin-left: 1%; max-width: 400px;"/>
 
-        <form method="post" th:action="@{/admin/removeLink}" th:unless"${publishers.isEmpty()}" class="form-group w-25" style="margin: 1%">
-            <h1 class="display-5 form_header">Remove Link</h1>
-            <span th:each="p : ${publishers}">
-                <h2 th:text="${p.name}"></h2>
-                <ul class="list-group" th:each="link : ${p.links}">
-                    <li class="list-group-item"><input th:text="${link.title}" th:value="${link.id}" type="checkbox" name="rssIds"></li>
-                </ul>
-            </span>
+        <form method="post" class="form-group w-25" id="removeLinkForm" style="margin: 1%">
 
-            <input type="submit" value="Remove" class="form-control w-25">
+            <input type="submit" value="Remove" class="form-control w-25" id="removeLinkBtn">
         </form>
     </span>
 </body>
@@ -74,11 +68,10 @@
 <script>
     $(document).ready(function(){
 
-        $.get("rest/admin/getPublisherFeeds", function(data){
+        $.get("rest/feed/all", function(data){
             var list = fetchFeeds(data);
-
             for(p in list){
-                createPublisher(list[p]);
+                createPublisherElements(list[p]);
             }
         });
 
@@ -96,31 +89,35 @@
         event.preventDefault();
     });
     
-    $("#errorMessage").click(function(){
+    $("#errorMessage").click(function() {
         $("#errorMessage").text("");
         $("#password").val("");
     });
 
-    $("#addLinkSub").click(function(event){
+    //TODO: Add functionality.
+    $("#addLinkSub").click(function(event) {
 
         let url ="rest/admin/addLink"+
             "?PubId=" + $("#publisherDd").find(":selected").val() + 
             "&Title=" + $("#linkTitle").val() +
             "&Link=" + $("#linkUrl").val();
         
-        console.log(url);
         $.post(url, function(data){
-            console.log(data);
         });
 
         event.preventDefault();
     });
 
-    function displayError(errorMessage){
+    //TODO: Add functionality.
+    $("#removeLink").click(function(event) {
+        event.preventDefault();
+    });
+
+    function displayError(errorMessage) {
         document.getElementById("errorMessage").innerText = errorMessage;
     }
 
-    function createPublisher(publisher){
+    function createPublisherElements(publisher) {
         let removeRow = "<tr id=\"" + publisher.id + "\" scope = \"row\">";
 
         removeRow += "<td>" + publisher.title + "</td>";
@@ -129,35 +126,62 @@
 
         $("#removePublisherTable").append(removeRow);
 
-        let addOption = "<option value=" + publisher.id + ">" + publisher.title + "</option>"
         $("#publisherDd").append($("<option id=\"Dd" + publisher.id + "\"></option>").html(publisher.title).val(publisher.id));
+        
+        $("#removeLinkForm").append($("<span></span>").attr("id", publisher.id).append($("<h1></h1>").text(publisher.title)));
+        $("#removeLinkForm #" + publisher.id).append("<ul></ul>");
+        
+        for(var l in publisher.feeds){
+            console.log(publisher.feeds[l].title);
+            $("#removeLinkForm #" + publisher.id + " ul").append($("<li></li>").text(publisher.feeds[l].title));
+        }
+
     }
 
-    function fetchFeeds(data){
+    function fetchFeeds(data) {
         var retPublishers = [];
 
         xmlDoc = $.parseXML(data);
         $xml = $( xmlDoc );
 
-        $publishers = $xml.find("Publishers");
+        $publishers = $xml.find("subscriptions");
         
-        $("publisher", $publishers).each(function(i, element) {
+        $("publisherXml", $publishers).each(function(i, element) {
             var nPub = new Publisher(element);
+
+            var i = 0;
+            $(element).find("link").each(function(i, element) {
+                i++;
+                var feed = new Feed(element);
+                nPub.feeds.push(feed);
+            });
             retPublishers.push(nPub);
         })
 
         return retPublishers;
     }
 
-    function removePublisher(id){
-        $("#" + id).remove();
-        $("#Dd" + id).remove();
+    function removePublisher(id) {
+        $.post("/admin/removePublisher", {id: id}, function(data){
+            if(data == "deleted"){
+                $("#" + id).remove();
+                $("#Dd" + id).remove();
+            }
+        });
     }
 
     class Publisher {
-        constructor(element){
-            this.id= $(element).find("id").text();
-            this.title= $(element).find("title").text();
+        constructor(element) {
+            this.id = $(element).find("id").first().text();
+            this.title = $(element).find("name").text();
+            this.feeds = [];
+        }
+    }
+
+    class Feed {
+        constructor(element) {
+            this.id = $(element).find("id").text();
+            this.title = $(element).find("title").text();
         }
     }
 </script>

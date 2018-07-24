@@ -23,26 +23,6 @@ public class AdminRestController {
 	@Autowired
 	RssLinkDao rssDao;
 
-	@RequestMapping("getPublisherFeeds")
-	@ResponseBody
-	public String getPublishers(){
-		String retString = "<Publishers>";
-
-		for(Publisher p : pDao.findAll()){
-			retString += "<publisher><title>" + p.getName() + "</title><id>" + p.getId() + "</id>\n" +
-					"<links>\n";
-
-			for(RssLink link : p.getLinks()){
-				retString += "<link>" + link.getTitle() + "</link><id>" + link.getId() + "</id>\n";
-			}
-
-			retString += "</links>" + "</publisher>\n";
-		}
-		retString += "</Publishers>";
-
-		return retString;
-	}
-
 	@RequestMapping("addLink")
 	@ResponseBody
 	public String addLink(@RequestParam("PubId") int publisherId,
