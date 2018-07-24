@@ -13,7 +13,7 @@ Admin panel - users in the admin role can add additional publishers and news fee
 Java Spring, Hibernate, jQuery, SQL
 
 # Need to learn
-Secure password handling
+SSL, Password encryption
 
 # Project Tracker
 https://trello.com/dailynews3
