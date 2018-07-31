@@ -4,17 +4,17 @@ import com.dailynews.DailyNews.models.rssfeeds.rsslink.RssLink;
 import com.dailynews.DailyNews.models.rssfeeds.rsslink.RssLinkDao;
 import com.dailynews.DailyNews.models.rssfeeds.rsslink.publisher.Publisher;
 import com.dailynews.DailyNews.models.rssfeeds.rsslink.publisher.PublisherDao;
+import jdk.nashorn.internal.runtime.options.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Optional;
 
 @Controller
@@ -39,9 +39,52 @@ public class AdminController {
 		return "admin";
 	}
 
+	@RequestMapping(value = "/addFeed", method = RequestMethod.POST)
+	@ResponseBody
+	public String processAddFeed(HttpServletRequest request){
+		int publisherId;
+		String title;
+		URL link;
+
+		try{
+			publisherId = Integer.valueOf(request.getParameter("publisherId"));
+			title = request.getParameter("title");
+			link = new URL(request.getParameter("link"));
+		} catch (NumberFormatException nfe){
+			System.out.println("Admin.addFeed could not parse publisherId to number");
+			return "Admin.addFeed could not parse publisherId to number";
+		} catch (MalformedURLException e) {
+			System.out.println("Admin.addFeed bad URL provided");
+			return "Admin.AddFeed badUrl provided";
+		} catch (Exception e){
+			System.out.println(e);
+			return "unexpected error";
+		}
+
+		RssLink feed = new RssLink();
+		feed.setRssUrl(link);
+		feed.setTitle(title);
+
+		Optional<Publisher> pOptional;
+
+		if((pOptional = pDao.findById(publisherId)) != null){
+			rssDao.save(feed);
+			Publisher p = pOptional.get();
+			p.links.add(feed);
+			pDao.save(p);
+		} else {
+			System.out.println("Admin.AddFeed Unable to locate publisher with provided Id");
+			return "Admin.AddFeed Unable to locate publisher with provided Id";
+		}
+
+		return Integer.toString(feed.getId());
+	}
+
 	@RequestMapping(value = "/addPublisher", method = RequestMethod.POST)
 	@ResponseBody
-	public String processAddPublisher(@RequestParam("publisher") String publisherName){
+	public String processAddPublisher(HttpServletRequest request){
+
+		String publisherName = request.getParameter("publisher");
 
 		if(pDao.doesPublisherExist(publisherName))
 			return publisherName + " already exists.";
@@ -51,23 +94,33 @@ public class AdminController {
 
 		pDao.save(publisher);
 
-		return "added";
+		return Integer.toString(publisher.getId());
 	}
 
+	@RequestMapping(value = "/removeFeed", method = RequestMethod.POST)
+	@ResponseBody
+	public String removeFeed(HttpServletRequest request){
+		int id;
 
-	@RequestMapping(value = "/removeLink", method = RequestMethod.POST)
-	public String removeLink(@RequestParam ArrayList<Integer> rssIds){
+		try {
+			id = Integer.valueOf(request.getParameter("id"));
+		} catch (NumberFormatException nfe) {
+			System.out.println(nfe);
 
-		for(Integer id : rssIds){
-			rssDao.deleteById(id);
+			return "AdminController.RemoveFeed: Improperly formatted number";
 		}
 
-		return "redirect:/admin";
+		if(rssDao.findById(id) == null){
+			return "AdminController.RemoveFeed: Rss Feed does not exist.";
+		}
+
+		rssDao.deleteById(id);
+		return "deleted";
 	}
 
 	@RequestMapping(value = "/removePublisher", method = RequestMethod.POST)
 	@ResponseBody
-	public  String removePublisher(ServletRequest request){
+	public  String processRemovePublisher(ServletRequest request){
 		String error = "";
 
 		int pubId = Integer.parseInt(request.getParameter("id"));
@@ -75,6 +128,7 @@ public class AdminController {
 		Optional<Publisher> optionalPub = pDao.findById(pubId);
 
 		if(optionalPub.isPresent()){
+			pDao.deleteById(pubId);
 			return "deleted";
 		} else {
 			error = "publisher does not exist.";

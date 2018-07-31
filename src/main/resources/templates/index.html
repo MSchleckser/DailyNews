@@ -16,12 +16,14 @@
         <table id="articleTable" class = "table table-striped" style = "max-width:1200px;">
             <col width="130">
             <col width="200">
+            <col width="50">
             <col width="8">
             <thead class = "thead-light">
                 <tr>
-                    <th scope="col"><h3>Title</h3></th>
-                    <th scope="col"><h3>Description</h3></th>
-                    <th scope="col"><h3>Date</h3></th>
+                    <th><h3>Title</h3></th>
+                    <th><h3>Description</h3></th>
+                    <th><h3>Date</h3></th>
+                    <th><h3>Comments</h3></th>
                 </tr>
             </thead>
         </table>
@@ -96,6 +98,7 @@
             row += "<td scope\"row\"><a href = \"" + article.link + "\">" + article.title + "</a></td>";
             row += "<td>" + article.description + "</td>";
             row += "<td>" + article.date + "</td>";
+            row += "<td>" + "" + "</td>";
         row += "</tr>";
 
         $("#articleTable").append(row);
@@ -117,10 +120,9 @@
 
     function loginUser(){
         if(getCookie("stayLoggedIn") == "1"){
-        console.log("test");
             var username = getCookie("username");
             var password = getCookie("password");
-            $.post("login/" + username + "/" + password)
+            $.post("login", {username:username, password:password});
         }
     }
 
