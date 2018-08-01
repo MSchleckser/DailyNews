@@ -165,7 +165,6 @@ public class ManageRestController {
 	@ResponseBody
 	public String getUserArticles(HttpSession session){
 		StringWriter retStr = new StringWriter();
-
 		retStr.write("<Articles>");
 
 		try {
@@ -215,7 +214,6 @@ public class ManageRestController {
 	@ResponseBody
 	public String returnArticles(HttpSession session){
 		String retBody = "";
-
 		Integer userId = (Integer)session.getAttribute("userId");
 		if(userId != null){
 			retBody = getArticles(userId);
@@ -260,6 +258,7 @@ public class ManageRestController {
 
 		try {
 			RssLink link = rssDao.getRandom();
+			System.out.println(link.getTitle());
 
 			ArticleFetcher fetcher = new ArticleFetcher();
 			fetcher.fetchFeed(link);

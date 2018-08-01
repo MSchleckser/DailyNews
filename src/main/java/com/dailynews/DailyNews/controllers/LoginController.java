@@ -31,10 +31,17 @@ public class LoginController {
 	public String loginUser(HttpServletRequest request,
 							HttpSession session){
 
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
+		String username;
+		String password;
+		Integer id = null;
 
-		Integer id = uDao.getUserId(username, password);
+		if(((username = request.getParameter("username")) != null) &&
+			((password = request.getParameter("password")) != null)){
+
+			id = uDao.getUserId(username, password);
+		} else {
+			return "improperly formatted POST request.";
+		}
 
 		if(id == null) {
 			return "Username or password is invalid";
@@ -43,5 +50,14 @@ public class LoginController {
 		session.setAttribute("userId", id);
 		session.setAttribute("role", uDao.findById(id).get().getRole().getName());
 		return "success";
+	}
+
+	@RequestMapping(value = "check", method = RequestMethod.GET)
+	@ResponseBody
+	public String isLoggedIn(HttpSession session){
+		if(session.getAttribute("userId") != null)
+			return "true";
+
+		return "false";
 	}
 }

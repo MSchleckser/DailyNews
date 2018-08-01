@@ -31,7 +31,7 @@ public class IndexController {
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String displayIndex(Model model, HttpSession session){
-		model.addAttribute("title", "Daily News");
+		model.addAttribute("title", "News Hub");
 		model.addAttribute("username", session.getAttribute("username"));
 
 		return "index";

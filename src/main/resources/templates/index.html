@@ -2,6 +2,36 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org/">
 <head th:replace = "fragments :: head">
 </head>
+
+<style>
+    .prompt {
+        position: absolute; 
+        background-color: #343A40;
+        color: white;
+        min-width: 15%;
+        border-radius: 0%;
+        border: #999C9F solid 3px;
+    }
+
+    .prompt > .body{
+        font-size: 1em;
+        width: 90%;
+        margin: 10px;
+        text-align: center;
+    }
+
+    .prompt > .pointer {
+        clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        background-color: #999C9F;
+        position: absolute;
+        left: 80%;
+        bottom: 99%;
+        width: 15px;
+        height: 15px;
+        border: #999C9F solid 3px;
+    }
+</style>
+
 <body>
     <div class="loader"></div>
     <nav th:replace = "fragments :: navigation"></nav>
@@ -23,7 +53,6 @@
                     <th><h3>Title</h3></th>
                     <th><h3>Description</h3></th>
                     <th><h3>Date</h3></th>
-                    <th><h3>Comments</h3></th>
                 </tr>
             </thead>
         </table>
@@ -67,6 +96,8 @@
         });
 
         loginUser();
+        isLoggedIn();
+
     });
 
     $("#logout").click(function(){
@@ -153,6 +184,41 @@
         setCookie("stayLoggedIn", "0", -1);
         setCookie("username", "", -1);
         setCookie("password", "", -1);
+    }
+
+    function isLoggedIn(){
+        $.get("login/check", function(data){
+            if(data=="false"){
+                displayLoginPrompt();
+            }
+        });
+    }
+
+    function displayLoginPrompt(){
+
+        var btnPos = $(".nav-link:first").position();
+        var btnHeight = $(".nav-link:first").height();
+
+        var prompt = $("<div></div>");
+        prompt.attr("class", "prompt");
+
+        var body = $("<div></div>");
+        body.attr("class", "body");
+        body.text("Create an account to subscribe to your favorite news outlet.");
+
+        prompt.append(body);
+
+        var pointer = $("<div></div>");
+        pointer.attr("class", "pointer");
+
+        prompt.append(pointer);
+
+        prompt.css({
+            top: btnPos.top + btnHeight * 2,
+            right: 30
+        })
+
+        $("body").append(prompt);
     }
 
     class Article {
