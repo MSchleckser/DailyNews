@@ -51,10 +51,8 @@ public class AdminController {
 			title = request.getParameter("title");
 			link = new URL(request.getParameter("link"));
 		} catch (NumberFormatException nfe){
-			System.out.println("Admin.addFeed could not parse publisherId to number");
 			return "Admin.addFeed could not parse publisherId to number";
 		} catch (MalformedURLException e) {
-			System.out.println("Admin.addFeed bad URL provided");
 			return "Admin.AddFeed badUrl provided";
 		} catch (Exception e){
 			System.out.println(e);

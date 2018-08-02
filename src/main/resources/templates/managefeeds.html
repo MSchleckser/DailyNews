@@ -13,19 +13,22 @@
 <nav th:replace = "fragments :: navigation"></nav>
 
 <div class="table-striped table-responsive container" style="margin-top: 2%; margin-bottom: 2%;">
-    <table class = "table table-striped" style = "max-width:80%;">
-        <col width="130"/>
-        <col width="20"/>
-        <col width="20"/>
-
-        <thead class = "thead-light">
-            <tr>
-                <th scope="col" style="width: 4%">Publisher</th>
-                <th scope="col" style="width: 6%">Title</th>
-                <th scope="col" style="width: 1%">Subscribe</th>
-            </tr>
-        </thead>
-    </table>
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-10">
+            <table class = "table table-striped">
+                    <thead class = "thead-light">
+                        <tr>
+                            <th style="width: 4%">Publisher</th>
+                            <th style="width: 6%">Title</th>
+                            <th style="width: 1%">Subscribe</th>
+                        </tr>
+                    </thead>
+                </table>
+        </div>
+        <div class="col"></div>
+    </div>
+   
 </div>
 
 </body>
@@ -33,22 +36,6 @@
 <script type = "text/javascript" th:src="@{javascript\feedUtility.js}"></script>
 
 <script th:inline="javascript">
-
-    $(document).ready(function(){
-        let feedPath = "rest/feed/all";
-        var subcribedPath = "rest/user/feeds";
-
-        $.when($.get(feedPath), $.get(subcribedPath)).done(function(feedData, subscribedIds){
-            var feeds = fetchFeeds(feedData[0]);
-            var ids = fetchSubscribedIds(subscribedIds[0]);
-
-            feeds.forEach(function(feed) {
-                feed.checkSubscribed(ids);
-                createTableRow(feed);
-            });
-        });
-    });
-    
     $("#logout").click(function(){
         console.log("click");
         clearCookies();

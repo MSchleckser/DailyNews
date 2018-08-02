@@ -25,7 +25,7 @@
         background-color: #999C9F;
         position: absolute;
         left: 80%;
-        bottom: 99%;
+        bottom: 99.5%;
         width: 15px;
         height: 15px;
         border: #999C9F solid 3px;
@@ -62,46 +62,46 @@
 
 <script>
 
-    $(".publisherSelector").change(function(){
-        var publisher = $( this ).val();
-
-        $(".articleRow").each(function(i, element){
-            element.remove();
-        });
-
-        if(publisher == "All"){
-            $.each(articles, function(i, article){
-                    createTableRow(article);
-            });
-        } else {
-            $.each(articles, function(i, article){
-                if(article.publisher == publisher){
-                    createTableRow(article);
-                }
-            });
-        }
-    });
-
+    
     var articles = [];
     var publishers = [];
 
     $(document).ready(function(){
+        loginUser();
         let path = "rest/feed/articles";
         $.when($.get(path)).done(function(feedData){
             articles = fetchArticles(feedData);
             articles.forEach(function(article){
                 createTableRow(article);
             });
+            sanatizeFeeds();
             $(".loader").hide();
         });
 
-        loginUser();
         isLoggedIn();
-
     });
 
+    $(".publisherSelector").change(function(){
+            var publisher = $( this ).val();
+
+            $(".articleRow").each(function(i, element){
+                element.remove();
+            });
+
+            if(publisher == "All"){
+                $.each(articles, function(i, article){
+                        createTableRow(article);
+                });
+            } else {
+                $.each(articles, function(i, article){
+                    if(article.publisher == publisher){
+                        createTableRow(article);
+                    }
+                });
+            }
+        });
+
     $("#logout").click(function(){
-        console.log("click");
         clearCookies();
         $.get("/logout");
         window.location = "/";
@@ -150,7 +150,7 @@
     }
 
     function loginUser(){
-        if(getCookie("stayLoggedIn") == "1"){
+        if((getCookie("stayLoggedIn") == "1") && !(isLoggedIn())) {
             var username = getCookie("username");
             var password = getCookie("password");
             $.post("login", {username:username, password:password});
@@ -219,6 +219,10 @@
         })
 
         $("body").append(prompt);
+    }
+
+    function sanatizeFeeds(){
+        $(".feedflare").remove();
     }
 
     class Article {

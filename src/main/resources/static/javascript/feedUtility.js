@@ -1,5 +1,19 @@
 
+$(document).ready(function(){
+    let feedPath = "rest/feed/all";
+    var subcribedPath = "rest/user/feeds";
 
+    $.when($.get(feedPath), $.get(subcribedPath)).done(function(feedData, subscribedIds){
+        var feeds = fetchFeeds(feedData[0]);
+        var ids = fetchSubscribedIds(subscribedIds[0]);
+
+        feeds.forEach(function(feed) {
+            feed.checkSubscribed(ids);
+            createTableRow(feed);
+        });
+    });
+});
+    
 function createTableRow(element){
     let feedRow = "<tr id=\"" + element.id + "\" scope = \"row\">";
 

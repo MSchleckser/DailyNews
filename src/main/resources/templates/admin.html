@@ -30,49 +30,83 @@
     <nav th:replace = "fragments :: navigation"></nav>
     <div id="errorMessage"></div>
 
-    <span class="">
+    <div class="container">
         <div class="page-header" style = "margin: 1.8%;">
             <h1>Administrator Panel</h1>
         </div>
 
-        <hr style="margin: .1%; margin-left: 1%; max-width: 400px;"/>
-        <div class="form-group w-25" style="margin: 1%">
-            <h1 class="display-5 form_header">Add Publisher</h1>
-            <div class="form-group">
-                <label th:for="username">Publisher</label>
-                <input class="form-control" id="pubName"/>
-            </div>
-            <input type="submit" value="Add" id="addPub" class="form-control w-25"/>
+        <div class="row">
+
+            <div class="col-sm"></div>
+                <div class="col-sm">
+                    <hr style="margin: .1%; margin-left: 1%; max-width: 400px;"/>
+                    <div class="form-group" style="margin: 1%">
+                        <h1 class="display-5 form_header">Add Publisher</h1>
+                        <div class="form-group">
+                            <label th:for="username">Publisher</label>
+                            <input class="form-control" id="pubName"/>
+                        </div>
+                        <input type="submit" value="Add" id="addPub" class="form-control w-25"/>
+                    </div>
+                </div>
+            <div class="col-sm"></div>
         </div>
 
-        <hr style="margin: .1%; margin-left: 1%; max-width: 400px;"/>
-
-        <form class="form-group w-25" style="margin: 1%">
-            <h1 class="display-5 form_header">Add Feed</h1>
-            <div class="form-group">
-                <select name="publisherDd"  class="form-control" id="publisherDd">
-                </select>
-
-                <div class="form-group">
-                    <label for="feedTitle">Title</label>
-                    <input type="text" class="form-control" id = "feedTitle"/>
+        <div class="row">
+                <div class="col-sm"></div>
+                <div class="col-sm">
+                    <hr style="margin: .1%; margin-left: 1%; max-width: 400px;"/>
+            
+                    <form class="form-group" style="margin: 1%">
+                        <h1 class="display-5 form_header">Add Feed</h1>
+                        <div class="form-group">
+                            <select name="publisherDd"  class="form-control" id="publisherDd">
+                            </select>
+            
+                            <div class="form-group">
+                                <div>Title</div>
+                                <input type="text" class="form-control" id = "feedTitle"/>
+                            </div>
+            
+                            <div class="form-group">
+                                <div>Link</div>
+                                <input type="text" class="form-control" id = "feedLink"/>
+                            </div>
+                            <input type="button" value="Add" class="form-control w-25" id="addLinkSub"/>
+                        </div>
+                    </form>
                 </div>
-
-                <div class="form-group">
-                    <label for="feedLink">Link</label>
-                    <input type="text" name="linkUrl" class="form-control" id = "feedLink"/>
-                </div>
-                <input type="button" value="Add" class="form-control w-25" id="addLinkSub"/>
+                <div class="col-sm">
             </div>
-        </form>
-
-        <hr style="margin: .1%; margin-left: 1%; max-width: 400px;"/>
-
-        <div method="post" class="container" id="removeLinkForm" style="margin: 1%">
         </div>
-    </span>
+
+        <div class="row">
+            <div class="col"></div>
+            <div class="col-10">
+                <hr style="margin: .1%; margin-left: 1%; max-width: 400px;"/>
+            
+                <div method="post" class="container" id="removeLinkForm" style="margin: 1%">
+                </div>
+            </div>
+            <div class="col"></div>
+        </div>
+    </div>
 </body>
 
 <script type="text/javascript" th:src="@{javascript/AdminUtility.js}">
+</script>
+<script>
+    $("#logout").click(function(){
+        clearCookies();
+        $.get("/logout");
+        window.location = "/";
+    });
+
+    function clearCookies(){
+        setCookie("stayLoggedIn", "0", -1);
+        setCookie("username", "", -1);
+        setCookie("password", "", -1);
+    }
+
 </script>
 </html>
