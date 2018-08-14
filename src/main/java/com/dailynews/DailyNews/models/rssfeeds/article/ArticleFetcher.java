@@ -1,10 +1,13 @@
 package com.dailynews.DailyNews.models.rssfeeds.article;
 
+import com.dailynews.DailyNews.models.comments.CommentContainer;
+import com.dailynews.DailyNews.models.comments.CommentContainerDao;
 import com.dailynews.DailyNews.models.rssfeeds.rsslink.RssLink;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -27,18 +30,17 @@ public class ArticleFetcher {
 
 			SyndFeedInput input = new SyndFeedInput();
 			SyndFeed syndFeed = input.build(new XmlReader(url));
-			int i = 0;
-			for (SyndEntry article : syndFeed.getEntries()) {
-				Article f = new Article();
+			for (SyndEntry rawArticle : syndFeed.getEntries()) {
+				Article freshArticle = new Article();
 
-				f.setTitle(article.getTitle());
-				f.setDescription(article.getDescription().getValue());
-				f.setAuthor(article.getAuthor());
-				f.setLink(article.getLink());
-				f.setDatePublished(article.getPublishedDate());
-				f.setPublisher(link.getPublisher().getName());
+				freshArticle.setTitle(rawArticle.getTitle());
+				freshArticle.setDescription(rawArticle.getDescription().getValue());
+				freshArticle.setAuthor(rawArticle.getAuthor());
+				freshArticle.setLink(rawArticle.getLink());
+				freshArticle.setDatePublished(rawArticle.getPublishedDate());
+				freshArticle.setPublisher(link.getPublisher().getName());
 
-				articleList.add(f);
+				articleList.add(freshArticle);
 			}
 		} catch (Exception e){
 			System.out.println(e);

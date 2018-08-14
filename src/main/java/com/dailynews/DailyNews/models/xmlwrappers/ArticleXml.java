@@ -13,6 +13,12 @@ import java.util.Date;
 public class ArticleXml {
 
 	@XmlElement
+	private int articleId;
+
+	@XmlElement
+	private int numberOfComments;
+
+	@XmlElement
 	private String title;
 
 	@XmlElement
@@ -37,6 +43,8 @@ public class ArticleXml {
 	public static ArticleXml convertArticle(Article article){
 		ArticleXml retArticle = new ArticleXml();
 
+		retArticle.articleId = article.getId();
+		retArticle.numberOfComments = article.getNumberOfComments();
 		retArticle.title = article.getTitle();
 		retArticle.author = article.getAuthor();
 		retArticle.description = article.getDescription();
@@ -93,5 +101,21 @@ public class ArticleXml {
 
 	public void setPublisher(String publisher) {
 		this.publisher = publisher;
+	}
+
+	public int getArticleId() {
+		return articleId;
+	}
+
+	public void setArticleId(int articleId) {
+		this.articleId = articleId;
+	}
+
+	public int getNumberOfComments() {
+		return numberOfComments;
+	}
+
+	public void setNumberOfComments(int numberOfComments) {
+		this.numberOfComments = numberOfComments;
 	}
 }

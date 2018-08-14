@@ -1,5 +1,7 @@
 package com.dailynews.DailyNews.controllers.rest;
 
+import com.dailynews.DailyNews.models.comments.CommentContainer;
+import com.dailynews.DailyNews.models.comments.CommentContainerDao;
 import com.dailynews.DailyNews.models.rssfeeds.article.Article;
 import com.dailynews.DailyNews.models.rssfeeds.article.ArticleFetcher;
 import com.dailynews.DailyNews.models.xmlwrappers.ArticleXml;
@@ -23,7 +25,9 @@ import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("rest")
@@ -31,6 +35,9 @@ public class ManageRestController {
 
 	@Autowired
 	private RssLinkDao rssDao;
+
+	@Autowired
+	private CommentContainerDao ccDao;
 
 	@Autowired
 	private UserDao uDao;
@@ -243,11 +250,13 @@ public class ManageRestController {
 			}
 
 			for(Article article : fetcher.getArticleList()){
+				System.out.println(article);
+				fetchComments(article);
 				ArticleXml xml = ArticleXml.convertArticle(article);
 				m.marshal(xml, retStr);
 			}
 		} catch (Exception e) {
-			System.out.println(e);
+			System.out.println("getArticles(id): "+e);
 		}
 		retStr.write("</Articles>");
 		return retStr.toString();
@@ -258,7 +267,6 @@ public class ManageRestController {
 
 		try {
 			RssLink link = rssDao.getRandom();
-			System.out.println(link.getTitle());
 
 			ArticleFetcher fetcher = new ArticleFetcher();
 			fetcher.fetchFeed(link);
@@ -271,6 +279,7 @@ public class ManageRestController {
 			m.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
 
 			for(Article article : fetcher.getArticleList()){
+				fetchComments(article);
 				ArticleXml articleXml = ArticleXml.convertArticle(article);
 
 				m.marshal(articleXml, retString);
@@ -281,5 +290,25 @@ public class ManageRestController {
 		}
 
 		return retString.toString();
+	}
+
+
+
+	private void fetchComments(Article article){
+		CommentContainer commentContainer = new CommentContainer();
+		commentContainer.generateId(article);
+		Optional<CommentContainer> optionalCommentContainer = ccDao.findById(new Integer(commentContainer.getContainerID()));
+
+		if(optionalCommentContainer.isPresent()){
+			commentContainer = optionalCommentContainer.get();
+		} else {
+			commentContainer.setArticlePublisher(article.getPublisher());
+			commentContainer.setArticleTitle(article.getTitle());
+			ccDao.save(commentContainer);
+			commentContainer.setComments(new ArrayList<>());
+		}
+
+		article.setId(commentContainer.getContainerID());
+		article.setNumberOfComments(commentContainer.getComments().size());
 	}
 }

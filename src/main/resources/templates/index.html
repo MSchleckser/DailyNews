@@ -53,6 +53,7 @@
                     <th><h3>Title</h3></th>
                     <th><h3>Description</h3></th>
                     <th><h3>Date</h3></th>
+                    <th><h3>Comments</h3></th>
                 </tr>
             </thead>
         </table>
@@ -129,7 +130,7 @@
             row += "<td scope\"row\"><a href = \"" + article.link + "\">" + article.title + "</a></td>";
             row += "<td>" + article.description + "</td>";
             row += "<td>" + article.date + "</td>";
-            row += "<td>" + "" + "</td>";
+            row += "<td>" + "<h3><a href = \"article/comments/" + article.id + "\">" + article.numberOfComments + "</a></h3>" + "</td>";
         row += "</tr>";
 
         $("#articleTable").append(row);
@@ -227,6 +228,8 @@
 
     class Article {
         constructor(element) {
+            this.id = $(element).find("articleId").text();
+            this.numberOfComments = $(element).find("numberOfComments").text();
             this.title = $(element).find("title").text();
             this.description = $(element).find("description").text();
             this.author = $(element).find("author").text();

@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.Objects;
 
 public class Article implements Comparator<Article>, Comparable<Article> {
+	private int id;
+	private int numberOfComments;
 	private String title;
 	private String description;
 	private String author;
@@ -65,6 +67,22 @@ public class Article implements Comparator<Article>, Comparable<Article> {
 
 	public void setPublisher(String publisher) {
 		this.publisher = publisher;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getNumberOfComments() {
+		return numberOfComments;
+	}
+
+	public void setNumberOfComments(int numberOfComments) {
+		this.numberOfComments = numberOfComments;
 	}
 
 	@Override

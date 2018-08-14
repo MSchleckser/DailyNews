@@ -1,5 +1,6 @@
 package com.dailynews.DailyNews.controllers;
 
+import com.dailynews.DailyNews.models.comments.CommentContainerDao;
 import com.dailynews.DailyNews.models.rssfeeds.article.Article;
 import com.dailynews.DailyNews.models.rssfeeds.article.ArticleFetcher;
 import com.dailynews.DailyNews.models.rssfeeds.rsslink.RssLink;
@@ -28,6 +29,9 @@ public class IndexController {
 
 	@Autowired
 	private PublisherDao pDao;
+
+	@Autowired
+	private CommentContainerDao ccDao;
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String displayIndex(Model model, HttpSession session){
