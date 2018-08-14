@@ -45,6 +45,10 @@ public class User {
 		rssLinks.remove(rssLink);
 	}
 
+	public boolean comparePassword(String otherPassword){
+		return true;
+	}
+
 	public int getId() {
 		return id;
 	}

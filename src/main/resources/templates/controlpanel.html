@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:replace = "fragments :: head">
+</head>
+
+<body>
+    <nav th:replace = "fragments :: navigation"></nav>
+    <div id="errorMessage"></div>
+    <div class = "container-fluid" style="margin-top: 5%">
+        <div class="row">
+            <div class = "col-sm"></div>
+            <div class = "col-sm">
+                <form>
+                    <div><h1>Reset Password</h1></div>
+                    <div class="form-group">
+                        <label for="oldPassword">Old Password</label>
+                        <input type="password" name="oldPassword" class="form-control" id="oldPasswordTB">
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" name="newPassword" class="form-control" id="newPasswordTB">
+                    </div>
+                    <div class="form-group">
+                        <label for="vNewPassword">Re-enter New Passsword</label>
+                        <input type="password" name="vNewPassword" class="form-control" id="vNewPasswordTB">
+                    </div>
+                    <input type="submit" value="Submit" id="resetPasswordSubmit" class="form-control w25" style="font-size: 1.3em">
+                </form>
+                <div id="responseMessage"></div>
+            </div>
+            <div class = "col-sm"></div>
+        </div>
+    </div>
+</body>
+<script>
+    $("#resetPasswordSubmit").click(function(event){
+        event.preventDefault();
+        var oldPassword = $("#oldPasswordTB").val();
+        var newPassword = $("#newPasswordTB").val();
+        var vNewPassword = $("#vNewPasswordTB").val();
+
+        if(newPassword != vNewPassword){
+            displayResponse("New password and verify new password do not match");
+            return;
+        }
+        
+        resetPassword(oldPassword,newPassword);
+    });
+
+    function resetPassword(oldPassword, newPassword){
+        $.post("ControlPanel/ResetPassword", {OldPassword: oldPassword, newPassword: newPassword}).done(
+            function(data){
+                displayResponse(data);
+            });
+    }
+
+    function displayResponse(responseMessage){
+        $("#responseMessage").text(responseMessage);
+    }
+</script>
+</html>

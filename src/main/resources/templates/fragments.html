@@ -28,6 +28,7 @@
         <span th:unless = "${session.userId == null}" class="navbar-nav navbar-right ml-auto">
             <div class = "nav-link" id="logout"><a class = "nav-link"><span class="glyphicon glyphicon-log-out" style="margin-right: 10px"></span>Logout</a></div>
             <div class = "nav-link pointer"><a class = "nav-link" href="/managefeeds"><span class="glyphicon glyphicon-cog" style="margin-right: 10px"></span>Manage Feeds</a></div>
+            <div class = "nav-link pointer"><a class = "nav-link" href="/ControlPanel"><span class="glyphicon glyphicon-user" style="margin-right: 10px"></span>Control Panel</a></div>
 
             <span th:if = "${session.role == 'ADMIN'}">
                 <div class = "nav-link"><a class = "nav-link" href="/admin"><span class="glyphicon glyphicon-warning-sign" style="margin-right: 10px"></span>Admin</a></div>
