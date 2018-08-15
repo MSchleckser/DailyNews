@@ -1,5 +1,6 @@
 package com.dailynews.DailyNews.models.user;
 
+import com.dailynews.DailyNews.models.comments.Comment.Comment;
 import com.dailynews.DailyNews.models.rssfeeds.rsslink.RssLink;
 import com.dailynews.DailyNews.models.user.role.Role;
 
@@ -29,6 +30,9 @@ public class User {
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	private List<RssLink> rssLinks = new ArrayList<>();
+
+	@OneToMany
+	private List<Comment> comments;
 
 	public User() {
 

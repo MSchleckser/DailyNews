@@ -1,6 +1,7 @@
 package com.dailynews.DailyNews.models.comments.Comment;
 
 import com.dailynews.DailyNews.models.comments.CommentContainer;
+import com.dailynews.DailyNews.models.user.User;
 
 import javax.persistence.*;
 
@@ -15,7 +16,10 @@ public class Comment {
 	@OneToOne
 	CommentContainer commentContainer;
 
-	private int userId;
+	@OneToOne
+	private User user;
+
+	private String commentBody;
 
 	public int getId() {
 		return id;
@@ -33,11 +37,19 @@ public class Comment {
 		this.commentContainer = commentContainer;
 	}
 
-	public int getUserId() {
-		return userId;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUserId(int userId) {
-		this.userId = userId;
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public String getCommentBody() {
+		return commentBody;
+	}
+
+	public void setCommentBody(String commentBody) {
+		this.commentBody = commentBody;
 	}
 }

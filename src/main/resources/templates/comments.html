@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:replace = "fragments :: head">
+</head>
+
+<body>
+    <nav th:replace = "fragments :: navigation"></nav>
+    <div class="container">
+            <div class="col"></div>
+            <div class="col">
+                <div class="row" style="margin-top: 8%">
+                    <h1 id="header"></h3>
+                </div>
+                <div class="row">
+                    <h1 class="row">Comments:</h3>
+                    <div id="comments" class = "container"></div>
+                </div>
+                <div class="row">
+                    <div id="PostForm"></div>
+                </div>
+            </div>
+            <div class="col"></div>
+    </div>
+</body>
+<script>
+    let path = "article/rest/comments/";
+    let id = 0;
+    $(document).ready(function(){
+        id = getArticleIdFromUrl();
+        $.get(path + id, function(data){
+            let article = fetchArticleData(data);
+            displayArticleData(article); 
+            createPostForm();
+        });
+    });
+
+    function getArticleIdFromUrl(){
+        let url = window.location.href;
+        let query = url.split("?")[1];
+        let id = query.split("=")[1];
+        return id;
+    }
+
+    function fetchArticleData(data){
+        let retArticle;
+
+        let xmlDoc = $.parseXML(data);
+        $xml = $( xmlDoc );
+        let element = $xml.find("Container");
+        let article = new Article(element);
+        fetchCommentData(article, element);
+        return article;
+    }
+
+    function fetchCommentData(article, element){
+        $.each($(element).find("Comment"), function(index, value){
+            article.addComment(value);
+        });
+    }
+
+    function displayArticleData(article){
+        $("#header").text(article.title + " - " + article.publisher).css("font-size", "2.5em");
+        
+        article.comments.forEach(function(value){
+            displayComment(value);
+        });
+    }
+
+    function displayComment(comment){
+        var div = $("<div></div>").attr("id", comment.id);
+        div.attr("class", "container");
+
+        var body = $("<div></div>").attr("class", "row");
+        body.text(comment.body);
+        body.css("font-size", "1.5em");
+
+        var footer = $("<div></div>").attr("class", "row");
+        footer.text("Poster: " + comment.user);
+
+        div.append(body);
+        div.append(footer);
+
+        $("#comments").append(div);
+    }
+
+    function createPostForm(){
+        $.get("login/check", function(data){
+            if(data == "true"){
+                loggedInForm();
+            } else {
+                loggedOutForm();
+            }
+        });
+    }
+
+    function loggedInForm(){
+        var form = $("<form></form>");
+
+        var div = $("<div></div>");
+        var textBox = $("<textarea></textarea>").attr("rows", 4);
+        textBox.attr("cols", 50);
+        textBox.attr("id", "commentbody");
+        textBox.css("margin-top", "3%");
+
+        div.append(textBox);
+        form.append(div);
+
+        div = $("<div></div>").css("margin-top", "3%").css("width", "40%");
+        var btn = $("<input></input>").attr("type", "submit").attr("class", "form-control");
+        div.append(btn);
+        form.append(div);
+
+        btn.click(function(event){
+            event.preventDefault();
+            postComment();
+        });
+
+        $("#PostForm").append(form);
+    }
+
+    function loggedOutForm(){
+        var div = $("<h2></h2>").text("Log in to post a comment");
+        $("#PostForm").append(div);
+    }
+
+    function postComment(){
+        var text = $("textarea").val();
+        $("textarea").val("");
+
+        $.post("article/CreateComment", {ArticleId: id, body: text}, function(id){
+            $("textarea").val();
+
+            $.get("login/getUsername", function(username){
+                var comment = new Comment();
+                comment.id = id;
+                comment.user = username;
+                comment.body = text;
+
+                displayComment(comment);
+            });
+        });
+    }
+
+    $("#logout").click(function(){
+        clearCookies();
+        $.get("/logout");
+        window.location = "/";
+    });
+
+    function clearCookies(){
+        setCookie("stayLoggedIn", "0", -1);
+        setCookie("username", "", -1);
+        setCookie("password", "", -1);
+    }
+
+    function setCookie(cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        var expires = "expires="+ d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    class Article {
+        constructor(element){
+            this.id = $(element).find("ID").text();
+            this.title = $(element).find("Title").text();
+            this.publisher = $(element).find("Publisher").text();
+            this.comments = [];
+        }
+
+        addComment(element){
+            var comment = new Comment(element);
+            this.comments.push(comment);
+        }
+    }
+
+    class Comment {
+        constructor(element){
+            this.id = $(element).find("ID").text();
+            this.user = $(element).find("User").text();
+            this.body = $(element).find("Body").text();
+        }
+    }
+</script>
+</html>

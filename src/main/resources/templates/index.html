@@ -130,7 +130,7 @@
             row += "<td scope\"row\"><a href = \"" + article.link + "\">" + article.title + "</a></td>";
             row += "<td>" + article.description + "</td>";
             row += "<td>" + article.date + "</td>";
-            row += "<td>" + "<h3><a href = \"article/comments/" + article.id + "\">" + article.numberOfComments + "</a></h3>" + "</td>";
+            row += "<td>" + "<h3><a href = \"article?id=" + article.id + "\">" + article.numberOfComments + "</a></h3>" + "</td>";
         row += "</tr>";
 
         $("#articleTable").append(row);

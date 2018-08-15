@@ -245,18 +245,18 @@ public class ManageRestController {
 			User u = uDao.findById(id).get();
 
 			ArticleFetcher fetcher = new ArticleFetcher();
+
 			for(RssLink link : u.getRssLinks()){
 				fetcher.fetchFeed(link);
 			}
 
 			for(Article article : fetcher.getArticleList()){
-				System.out.println(article);
 				fetchComments(article);
 				ArticleXml xml = ArticleXml.convertArticle(article);
 				m.marshal(xml, retStr);
 			}
 		} catch (Exception e) {
-			System.out.println("getArticles(id): "+e);
+			System.out.println("getArticles("+id+"): "+e);
 		}
 		retStr.write("</Articles>");
 		return retStr.toString();
@@ -292,8 +292,6 @@ public class ManageRestController {
 		return retString.toString();
 	}
 
-
-
 	private void fetchComments(Article article){
 		CommentContainer commentContainer = new CommentContainer();
 		commentContainer.generateId(article);
@@ -304,6 +302,7 @@ public class ManageRestController {
 		} else {
 			commentContainer.setArticlePublisher(article.getPublisher());
 			commentContainer.setArticleTitle(article.getTitle());
+			System.out.println("save");
 			ccDao.save(commentContainer);
 			commentContainer.setComments(new ArrayList<>());
 		}

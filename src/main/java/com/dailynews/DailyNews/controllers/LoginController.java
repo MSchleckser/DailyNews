@@ -11,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("login")
@@ -59,5 +60,19 @@ public class LoginController {
 			return "true";
 
 		return "false";
+	}
+
+	@RequestMapping(value = "getUsername", method = RequestMethod.GET)
+	@ResponseBody
+	public String getUsername(HttpSession session){
+		if(session.getAttribute("userId") == null)
+			return "not logged in";
+
+		Optional<User> optionalUser = uDao.findById((Integer) session.getAttribute("userId"));
+
+		if(!optionalUser.isPresent())
+			return "Unable to find user";
+
+		return optionalUser.get().getUsername();
 	}
 }
