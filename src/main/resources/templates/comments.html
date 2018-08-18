@@ -3,6 +3,15 @@
 <head th:replace = "fragments :: head">
 </head>
 
+<style>
+    .glyphicon-remove {
+        display: block;
+        position: relative;
+        top: -55px;
+        left: -40px;
+    }
+</style>
+
 <body>
     <nav th:replace = "fragments :: navigation"></nav>
     <div class="container">
@@ -22,17 +31,42 @@
             <div class="col"></div>
     </div>
 </body>
+
 <script>
-    let path = "article/rest/comments/";
+    let commentsPath = "article/rest/comments/";
+    let rolePath = "login/getRole";
+
     let id = 0;
     $(document).ready(function(){
         id = getArticleIdFromUrl();
-        $.get(path + id, function(data){
-            let article = fetchArticleData(data);
+
+        $.get(commentsPath + id, function(data){
+            let article = parseArticleData(data);
             displayArticleData(article); 
             createPostForm();
-        });
+            $.get(rolePath, function(data){
+                if(data == "ADMIN"){
+                    displayDeleteGlyph();
+                }
+            });
+        })
     });
+
+    function displayDeleteGlyph(){
+
+        var comments = $(".comment");
+
+        for(var i = 0; i < comments.length; i++){
+            var div = $("<div></div>").attr("class", "glyphicon glyphicon-remove");
+            div.css("font-size", "1.8em");
+
+            var id = comments.eq(i).attr("id");
+
+            div.attr("onclick", "removeComment(" + id + ")");
+
+            $(".comment").get(i).append(div.get(0));
+        }
+    }
 
     function getArticleIdFromUrl(){
         let url = window.location.href;
@@ -41,18 +75,18 @@
         return id;
     }
 
-    function fetchArticleData(data){
+    function parseArticleData(data){
         let retArticle;
 
         let xmlDoc = $.parseXML(data);
         $xml = $( xmlDoc );
         let element = $xml.find("Container");
         let article = new Article(element);
-        fetchCommentData(article, element);
+        parseCommentData(article, element);
         return article;
     }
 
-    function fetchCommentData(article, element){
+    function parseCommentData(article, element){
         $.each($(element).find("Comment"), function(index, value){
             article.addComment(value);
         });
@@ -68,7 +102,10 @@
 
     function displayComment(comment){
         var div = $("<div></div>").attr("id", comment.id);
-        div.attr("class", "container");
+        div.attr("class", "container comment");
+        div.css("margin-top", "2%");
+        div.css("border-top", "1px solid");
+        div.css("padding", "1.5%");
 
         var body = $("<div></div>").attr("class", "row");
         body.text(comment.body);
@@ -79,26 +116,24 @@
 
         div.append(body);
         div.append(footer);
-
         $("#comments").append(div);
     }
 
     function createPostForm(){
-        $.get("login/check", function(data){
-            if(data == "true"){
-                loggedInForm();
-            } else {
+        $.get("login/getRole", function(data){
+            if(data == "Not logged in."){
                 loggedOutForm();
+            } else {
+                loggedInForm();
             }
         });
     }
 
     function loggedInForm(){
         var form = $("<form></form>");
-
         var div = $("<div></div>");
-        var textBox = $("<textarea></textarea>").attr("rows", 4);
-        textBox.attr("cols", 50);
+        var textBox = $("<textarea></textarea>").attr("rows", 8);
+        textBox.attr("cols", 80);
         textBox.attr("id", "commentbody");
         textBox.css("margin-top", "3%");
 
@@ -138,6 +173,16 @@
 
                 displayComment(comment);
             });
+        });
+    }
+
+    function removeComment(id){
+        $.post("article/removeComment", {id: id}, function(data){
+            if(data == "success"){
+                $("#"+id).remove();
+            } else {
+                alert(data);
+            }
         });
     }
 

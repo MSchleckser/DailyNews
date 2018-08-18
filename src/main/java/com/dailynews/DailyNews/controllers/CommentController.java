@@ -88,6 +88,29 @@ public class CommentController {
 		return Integer.toString(comment.getId());
 	}
 
+	@RequestMapping(value = "removeComment")
+	@ResponseBody
+	public String removeComment(HttpServletRequest request, HttpSession session){
+		if((session.getAttribute("role").equals("")))
+			return	"You do not have the permissions to do that!";
+
+		if(request.getParameter("id") == null)
+			return "Malformed request";
+
+		System.out.println(request.getParameter("id"));
+
+		Integer id = Integer.parseInt(request.getParameter("id"));
+
+		Optional<Comment> comment = cDao.findById(id);
+
+		if(!comment.isPresent())
+			return "could not find the comment";
+
+		cDao.delete(comment.get());
+
+		return "success";
+	}
+
 	private CommentContainer getCommentContainer(Integer id){
 		Optional<CommentContainer> optionalCommentContainer = ccDao.findById(id);
 		return optionalCommentContainer.get();

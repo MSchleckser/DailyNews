@@ -53,15 +53,6 @@ public class LoginController {
 		return "success";
 	}
 
-	@RequestMapping(value = "check", method = RequestMethod.GET)
-	@ResponseBody
-	public String isLoggedIn(HttpSession session){
-		if(session.getAttribute("userId") != null)
-			return "true";
-
-		return "false";
-	}
-
 	@RequestMapping(value = "getUsername", method = RequestMethod.GET)
 	@ResponseBody
 	public String getUsername(HttpSession session){
@@ -74,5 +65,14 @@ public class LoginController {
 			return "Unable to find user";
 
 		return optionalUser.get().getUsername();
+	}
+
+	@RequestMapping(value = "getRole", method = RequestMethod.GET)
+	@ResponseBody
+	public String getRole(HttpSession session){
+		if(session.getAttribute("role") == null)
+			return "Not logged in.";
+
+		return (String)session.getAttribute("role");
 	}
 }
