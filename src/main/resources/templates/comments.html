@@ -35,20 +35,23 @@
 <script>
     let commentsPath = "article/rest/comments/";
     let rolePath = "login/getRole";
+    let role = "";
 
     let id = 0;
     $(document).ready(function(){
         id = getArticleIdFromUrl();
 
+        $.get(rolePath, function(data){
+            role = data;
+        });
+
         $.get(commentsPath + id, function(data){
             let article = parseArticleData(data);
             displayArticleData(article); 
             createPostForm();
-            $.get(rolePath, function(data){
-                if(data == "ADMIN"){
-                    displayDeleteGlyph();
-                }
-            });
+            if(role == "ADMIN") {
+                displayDeleteGlyph();
+            }
         })
     });
 
@@ -57,15 +60,18 @@
         var comments = $(".comment");
 
         for(var i = 0; i < comments.length; i++){
-            var div = $("<div></div>").attr("class", "glyphicon glyphicon-remove");
-            div.css("font-size", "1.8em");
-
             var id = comments.eq(i).attr("id");
-
-            div.attr("onclick", "removeComment(" + id + ")");
-
-            $(".comment").get(i).append(div.get(0));
+            $(".comment").get(i).append(getDeleteGlyph().get(0));
         }
+    }
+
+    function getDeleteGlyph(id){
+        var div = $("<div></div>").attr("class", "glyphicon glyphicon-remove");
+        div.css("font-size", "1.8em");
+
+        div.attr("onclick", "removeComment(" + id + ")");
+
+        return div;
     }
 
     function getArticleIdFromUrl(){
@@ -117,6 +123,7 @@
         div.append(body);
         div.append(footer);
         $("#comments").append(div);
+        return div;
     }
 
     function createPostForm(){
@@ -171,7 +178,12 @@
                 comment.user = username;
                 comment.body = text;
 
-                displayComment(comment);
+                var commentDiv = displayComment(comment);
+
+                if(role == "ADMIN") {
+                    let div = getDeleteGlyph(id);
+                    commentDiv.append(div);
+                }
             });
         });
     }
