@@ -2,6 +2,8 @@ package com.dailynews.DailyNews.controllers;
 
 import com.dailynews.DailyNews.models.user.User;
 import com.dailynews.DailyNews.models.user.UserDao;
+import com.dailynews.DailyNews.models.user.salt.SaltDao;
+import com.google.common.hash.Hashing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.stereotype.Controller;
@@ -14,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Scanner;
@@ -24,6 +27,9 @@ public class ControlPanelController {
 
 	@Autowired
 	private UserDao uDao;
+
+	@Autowired
+	private SaltDao sDao;
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String displayControlPanel(Model model, HttpSession session) {
@@ -42,7 +48,7 @@ public class ControlPanelController {
 
 		if((oldPassword = request.getParameter("OldPassword")) == null ||
 				(newPassword = request.getParameter("newPassword")) == null)
-			return "null parameter";
+			return "Malformed request";
 
 		Optional<User> optionalUser = uDao.findById((Integer)session.getAttribute("userId"));
 
@@ -51,10 +57,10 @@ public class ControlPanelController {
 
 		User u = optionalUser.get();
 
-		if(!u.getPassword().equals(oldPassword))
+		if(!u.comparePassword(oldPassword, sDao))
 			return "Old password does not match";
 
-		u.setPassword(newPassword);
+		u.setPassword(u.hashPassword(newPassword, sDao));
 		uDao.save(u);
 
 		return "success";

@@ -2,6 +2,8 @@ package com.dailynews.DailyNews.controllers;
 
 import com.dailynews.DailyNews.models.user.User;
 import com.dailynews.DailyNews.models.user.UserDao;
+import com.dailynews.DailyNews.models.user.salt.SaltDao;
+import com.google.common.hash.Hashing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 @Controller
@@ -19,6 +22,9 @@ public class LoginController {
 
 	@Autowired
 	private UserDao uDao;
+
+	@Autowired
+	private SaltDao sDao;
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String displayLoginForm(Model model) {
@@ -36,17 +42,19 @@ public class LoginController {
 		String password;
 		Integer id = null;
 
-		if(((username = request.getParameter("username")) != null) &&
-			((password = request.getParameter("password")) != null)){
-
-			id = uDao.getUserId(username, password);
-		} else {
+		if(((username = request.getParameter("username")) == null) ||
+			((password = request.getParameter("password")) == null))
 			return "improperly formatted POST request.";
-		}
 
-		if(id == null) {
+		id = uDao.getUserId(username);
+
+		if(id == null)
 			return "Username or password is invalid";
-		}
+
+		User user = uDao.findById(id).get();
+
+		if(!user.comparePassword(password, sDao))
+			return "Username or password is invalid";
 
 		session.setAttribute("userId", id);
 		session.setAttribute("role", uDao.findById(id).get().getRole().getName());
@@ -74,5 +82,11 @@ public class LoginController {
 			return "Not logged in.";
 
 		return (String)session.getAttribute("role");
+	}
+
+	@RequestMapping(value = "check", method = RequestMethod.GET)
+	@ResponseBody
+	public String checkLoggedIn(HttpSession session){
+		return session.getAttribute("userId") == null ? "false" : "true";
 	}
 }

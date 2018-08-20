@@ -3,6 +3,7 @@ package com.dailynews.DailyNews.controllers;
 import com.dailynews.DailyNews.models.user.User;
 import com.dailynews.DailyNews.models.user.UserDao;
 import com.dailynews.DailyNews.models.user.role.RoleDao;
+import com.dailynews.DailyNews.models.user.salt.SaltDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +24,9 @@ public class SignupController {
 
 	@Autowired
 	private RoleDao rDao;
+
+	@Autowired
+	private SaltDao sDao;
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String displayUserSignup(Model model){
@@ -53,16 +57,14 @@ public class SignupController {
 		}
 
 		if(error.isEmpty()){
-			error = registerUser(username, password);
+			error = registerUser(username, password, sDao);
 		}
 
-		return error.isEmpty() ? registerUser(username, password) : error;
+		return error;
 	}
 
-	private String registerUser(String username, String password){
-		User u = new User();
-		u.setUsername(username);
-		u.setPassword(password);
+	private String registerUser(String username, String password, SaltDao sDao){
+		User u = new User(username, password, sDao);
 		u.setRole(rDao.findById(1).get());
 
 		uDao.save(u);

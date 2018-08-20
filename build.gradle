@@ -36,12 +36,14 @@ dependencies {
 	//Rome RSS feed API.
 	compile('com.rometools:rome:1.9.0')
 
+	//Google Guava for SHA-256
+	compile group: 'com.google.guava', name: 'guava', version: '23.5-jre'
+
 	//Runtime APIs
 	runtime('org.springframework.boot:spring-boot-devtools')
 
 	//Test compile APIs
 	testCompile('org.springframework.boot:spring-boot-starter-test')
-	//testCompile("org.springframework.security:spring-security-test")
 }
 
 

@@ -97,8 +97,6 @@ public class CommentController {
 		if(request.getParameter("id") == null)
 			return "Malformed request";
 
-		System.out.println(request.getParameter("id"));
-
 		Integer id = Integer.parseInt(request.getParameter("id"));
 
 		Optional<Comment> comment = cDao.findById(id);
@@ -131,6 +129,7 @@ public class CommentController {
 		writer.append("<Comments>\n");
 
 		for(Comment comment : container.getComments()){
+			System.out.println(comment.getId());
 			fetchComment(comment, writer);
 		}
 
